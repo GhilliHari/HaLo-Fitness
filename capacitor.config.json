@@ -1,0 +1,6 @@
+{
+  "appId": "com.halofitness.app",
+  "appName": "HaLo Fitness",
+  "webDir": "public",
+  "bundledWebRuntime": false
+}

@@ -1,0 +1,17 @@
+{
+  "name": "HaLo Fitness Portal",
+  "short_name": "HaLo Fitness",
+  "description": "Premium Full-Stack Fitness Portal with bilingual video support and SVG muscle map",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#10b981",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3048/3048398.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

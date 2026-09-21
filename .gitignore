@@ -1,0 +1,8 @@
+node_modules/
+.venv/
+dist/
+jdk.tar.gz
+jdk17/
+jdk21/
+.DS_Store
+*.log

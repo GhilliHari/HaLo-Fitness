@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <title>HaLo Fitness - Premium Full-Stack Fitness Portal</title>
+  <meta name="description" content="HaLo is an advanced fitness practitioner portal featuring workout libraries, diet schedules, calorie trackers, and bilingual video instructions.">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css?v=2">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PWA Manifest & iOS Standalone PWA Support -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HaLo Fitness">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3048/3048398.png">
+</head>
+<body class="theme-natural">
+
+
+
+  <!-- Sidebar Navigation -->
+  <aside>
+    <div class="brand">
+      <div class="brand-logo">
+        <i class="fa-solid fa-bolt-lightning"></i> HaLo Fitness
+      </div>
+    </div>
+    <div class="brand-subtitle" data-i18n="brand-subtitle">Fitness Practitioner Portal</div>
+
+    <ul class="nav-links">
+      <li class="nav-item active" data-tab="tab-dashboard">
+        <a href="#"><i class="fa-solid fa-chart-line"></i> <span data-i18n="nav-dashboard">Dashboard</span></a>
+      </li>
+      <li class="nav-item" data-tab="tab-workouts">
+        <a href="#"><i class="fa-solid fa-dumbbell"></i> <span data-i18n="nav-workouts">Workout Library</span></a>
+      </li>
+      <li class="nav-item" data-tab="tab-diet">
+        <a href="#"><i class="fa-solid fa-apple-whole"></i> <span data-i18n="nav-diet">Nutrition Plan</span></a>
+      </li>
+      <li class="nav-item" data-tab="tab-recovery">
+        <a href="#"><i class="fa-solid fa-kit-medical"></i> <span data-i18n="nav-recovery">Recovery Strategy</span></a>
+      </li>
+      <li class="nav-item" data-tab="tab-tracker">
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> <span data-i18n="nav-tracker">Calorie Tracker</span></a>
+      </li>
+      <li class="nav-item" data-tab="tab-pedometer">
+        <a href="#"><i class="fa-solid fa-shoe-prints"></i> <span data-i18n="nav-pedometer">Step Pedometer</span></a>
+      </li>
+      <li class="nav-item" data-tab="tab-ideal-weight">
+        <a href="#"><i class="fa-solid fa-bullseye"></i> <span>Ideal Weight & Deficit</span></a>
+      </li>
+      <li class="nav-item" data-tab="tab-philosophy">
+        <a href="#"><i class="fa-solid fa-seedling"></i> <span data-i18n="nav-philosophy">Our Philosophy</span></a>
+      </li>
+    </ul>
+
+    <!-- Quick Profile Details in Sidebar -->
+    <div class="sidebar-profile">
+      <div class="level" id="profile-level-badge">Intermediate</div>
+      <div class="name" id="profile-name-badge">Eco Warrior</div>
+      <div style="display: flex; gap: 6px; margin-top: 8px;">
+        <button class="btn-secondary" style="padding: 0.4rem 0.6rem; font-size: 0.75rem;" id="btn-open-profile-dialog">
+          <i class="fa-solid fa-gear"></i> <span data-i18n="sidebar-settings">Settings</span>
+        </button>
+        <a href="/HaLo-Fitness.apk" download="HaLo-Fitness.apk" class="btn-primary" style="padding: 0.4rem 0.6rem; font-size: 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #22c55e; color: #fff; border-radius: 6px; font-weight: 600;">
+          <i class="fa-brands fa-android"></i> <span>Download APK</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main>
+    <header>
+      <div class="header-title">
+        <h1 id="header-greeting">Welcome back, Eco Warrior</h1>
+        <p id="header-subtext">You are on the natural fitness track. Nurturing recovery and longevity.</p>
+      </div>
+
+      <!-- Controls Container on the Right -->
+      <div class="header-controls">
+        <a href="/HaLo-Fitness.apk" download="HaLo-Fitness.apk" class="btn-action" id="btn-download-apk" style="background: linear-gradient(135deg, #00f2fe, #4facfe); color: #000; font-weight: 700; border: none; padding: 0.45rem 0.85rem; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 0.4rem; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3);">
+          <i class="fa-brands fa-android" style="font-size: 1.1rem;"></i> <span>Download Android App (.APK)</span>
+        </a>
+
+        <button type="button" class="btn-action" id="btn-header-calc-shortcut" style="background: rgba(var(--theme-primary-rgb), 0.15); color: var(--theme-primary); border: 1px solid rgba(var(--theme-primary-rgb), 0.3); border-radius: 8px; font-weight: 600; padding: 0.45rem 0.8rem; font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">
+          <i class="fa-solid fa-calculator"></i> <span>Calorie Calculator</span>
+        </button>
+
+        <!-- Language Selector Switcher -->
+        <div class="lang-controller">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ta">தமிழ்</button>
+          <button class="lang-btn" data-lang="tg">Tanglish</button>
+        </div>
+
+        <!-- Track Selector Switcher -->
+        <div class="track-controller">
+          <button class="track-btn active" id="btn-track-natural" data-track="natural">
+            <i class="fa-solid fa-seedling"></i> <span data-i18n="track-natural">Natural Fit</span>
+          </button>
+          <button class="track-btn" id="btn-track-enhanced" data-track="enhanced">
+            <i class="fa-solid fa-flask"></i> <span data-i18n="track-enhanced">Enhanced Fit</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- TAB: DASHBOARD -->
+    <section id="tab-dashboard" class="tab-content active">
+      <div class="dashboard-grid">
+        
+        <!-- Mobile Quick Ideal Weight & Deficit Banner -->
+        <div class="glass-panel col-12" style="background: linear-gradient(135deg, rgba(var(--theme-primary-rgb), 0.15), rgba(0, 242, 254, 0.08)); border: 1px solid rgba(var(--theme-primary-rgb), 0.35); padding: 1rem; border-radius: 16px; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" id="btn-dashboard-ideal-banner">
+          <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--theme-primary); color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+              <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <div>
+              <strong style="font-size: 0.95rem; color: #FFF; display: block;">Ideal Weight & Deficit Engine</strong>
+              <span style="font-size: 0.78rem; color: var(--theme-text-muted);">Capture height & weight for WHO ideal weight target & workout plan</span>
+            </div>
+          </div>
+          <span style="background: rgba(var(--theme-primary-rgb), 0.2); color: var(--theme-primary); border: 1px solid rgba(var(--theme-primary-rgb), 0.4); padding: 6px 12px; border-radius: 10px; font-size: 0.78rem; font-weight: 700;">Open ▶</span>
+        </div>
+
+        <!-- Daily Calories Widget -->
+        <div class="glass-panel col-8">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-fire-flame-curved"></i> Daily Calorie Intake</h3>
+            <div style="display: flex; gap: 0.75rem;">
+              <button class="btn-action" id="btn-scan-meal-shortcut" style="background: var(--theme-secondary); color: #000;">
+                <i class="fa-solid fa-camera"></i> AI Scanner
+              </button>
+              <button class="btn-action" id="btn-log-calories-shortcut">
+                <i class="fa-solid fa-plus"></i> Quick Log
+              </button>
+            </div>
+          </div>
+          
+          <div class="cal-gauge-wrapper">
+            <div class="cal-gauge-info">
+              <span class="cal-value-large" id="cal-value">0 / 2600 kcal</span>
+              <p style="color: var(--theme-text-muted); font-size: 0.9rem;">Remaining daily energy intake</p>
+            </div>
+            <div class="cal-value-large" id="cal-percent-text">0%</div>
+          </div>
+          
+          <div class="progress-card" style="margin-top: 1.5rem;">
+            <div class="progress-track">
+              <div class="progress-fill bg-primary" id="cal-progress-bar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Water Widget -->
+        <div class="glass-panel col-4">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-droplet"></i> Hydration</h3>
+          </div>
+          <div style="text-align: center; margin: 1rem 0;">
+            <span class="cal-value-large" id="water-text">0.0L / 3.5L</span>
+          </div>
+          <div class="progress-card">
+            <div class="progress-track">
+              <div class="progress-fill bg-blue" id="water-bar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Step Pedometer Widget -->
+        <div class="glass-panel col-4 col-md-12" id="dashboard-pedometer-widget" style="cursor: pointer;">
+          <div class="panel-header" style="align-items: center;">
+            <h3 class="panel-title"><i class="fa-solid fa-shoe-prints" style="color: #00f2fe;"></i> <span data-i18n="pedometer-dash-title">Daily Steps</span></h3>
+            <span class="badge success" id="pedometer-dashboard-status">Live</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.5rem;">
+            <div>
+              <div style="display: flex; align-items: baseline; gap: 0.3rem;">
+                <span class="cal-value-large" id="pedometer-dash-steps" style="font-size: 2rem; color: #FFF;">0</span>
+                <span style="color: var(--theme-text-muted); font-size: 0.8rem;" id="pedometer-dash-goal">/ 10,000</span>
+              </div>
+              <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; font-size: 0.78rem; color: var(--theme-text-muted);">
+                <span><i class="fa-solid fa-route" style="color: #00f2fe;"></i> <strong id="pedometer-dash-dist" style="color: #FFF;">0.00</strong> km</span>
+                <span><i class="fa-solid fa-fire" style="color: #ff5252;"></i> <strong id="pedometer-dash-kcal" style="color: #FFF;">0</strong> kcal</span>
+              </div>
+            </div>
+            <div style="text-align: center;">
+              <svg width="60" height="60" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.08)" stroke-width="10" fill="none"></circle>
+                <circle id="pedometer-dash-ring" cx="50" cy="50" r="42" stroke="#00f2fe" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="263.89" stroke-dashoffset="263.89" transform="rotate(-90 50 50)" style="transition: stroke-dashoffset 0.5s ease;"></circle>
+              </svg>
+              <div style="font-size: 0.7rem; font-weight: 700; color: #00f2fe; margin-top: 2px;" id="pedometer-dash-pct">0%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Macro breakdown -->
+        <div class="glass-panel col-6">
+          <div class="panel-header" style="align-items: center;">
+            <h3 class="panel-title"><i class="fa-solid fa-chart-pie"></i> Macro Breakdown</h3>
+            <button type="button" class="btn-secondary" id="btn-open-nutrient-breakdown" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 8px;">
+              <i class="fa-solid fa-list-check" style="color: var(--theme-primary);"></i> Source Breakdown
+            </button>
+          </div>
+
+          <!-- Energy Distribution Ratio Bar (% Carbs / % Protein / % Fats) -->
+          <div style="margin-bottom: 1.25rem; background: rgba(0,0,0,0.2); padding: 0.85rem; border-radius: 12px; border: 1px solid var(--theme-panel-border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.8rem; font-weight: 600;">
+              <span style="color: var(--theme-text-main);">Caloric Macro Distribution</span>
+              <span id="macro-ratio-text" style="color: var(--theme-primary);">0% C | 0% P | 0% F</span>
+            </div>
+            <div style="height: 10px; width: 100%; background: rgba(255,255,255,0.05); border-radius: 100px; display: flex; overflow: hidden;">
+              <div id="macro-ratio-carbs" style="width: 33.3%; background: var(--theme-primary); height: 100%; transition: width 0.3s ease;"></div>
+              <div id="macro-ratio-protein" style="width: 33.3%; background: #ffb703; height: 100%; transition: width 0.3s ease;"></div>
+              <div id="macro-ratio-fats" style="width: 33.3%; background: #f77f00; height: 100%; transition: width 0.3s ease;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-around; font-size: 0.7rem; color: var(--theme-text-muted); margin-top: 0.4rem;">
+              <span><i class="fa-solid fa-circle" style="color: var(--theme-primary); font-size: 0.6rem;"></i> Carbs (4 kcal/g)</span>
+              <span><i class="fa-solid fa-circle" style="color: #ffb703; font-size: 0.6rem;"></i> Protein (4 kcal/g)</span>
+              <span><i class="fa-solid fa-circle" style="color: #f77f00; font-size: 0.6rem;"></i> Fats (9 kcal/g)</span>
+            </div>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Protein -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <span>Protein</span>
+                <span id="protein-text">0g / 160g</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-orange" id="protein-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Carbs -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <span>Carbohydrates</span>
+                <span id="carbs-text">0g / 300g</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-primary" id="carbs-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Fats -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <span>Fats</span>
+                <span id="fats-text">0g / 80g</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-secondary" id="fats-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Dietary Fiber -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <span>Dietary Fiber</span>
+                <span id="fiber-text">0.0g / 30.0g</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-blue" id="fiber-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Workout Quick Info -->
+        <div class="glass-panel col-6">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-heart-pulse"></i> Today's Workout</h3>
+            <span class="badge success" id="workout-status-badge">Completed</span>
+          </div>
+          
+          <div class="workout-stats-grid">
+            <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: 16px; border: 1px solid var(--theme-panel-border);">
+              <p style="color: var(--theme-text-muted); font-size: 0.8rem; text-transform: uppercase;">Duration</p>
+              <h3 style="font-family: var(--font-display); font-size: 1.6rem; margin-top: 0.25rem;" id="workout-duration-val">45 mins</h3>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.02); padding: 1.25rem; border-radius: 16px; border: 1px solid var(--theme-panel-border);">
+              <p style="color: var(--theme-text-muted); font-size: 0.8rem; text-transform: uppercase;">Style Focus</p>
+              <h3 style="font-family: var(--font-display); font-size: 1.6rem; margin-top: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="workout-style-val">Strength</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- HealthifyMe Style Meal-Wise Tracker -->
+        <div class="glass-panel col-12" id="healthifyme-meal-tracker">
+          <div class="panel-header" style="margin-bottom: 1rem;">
+            <div>
+              <h3 class="panel-title"><i class="fa-solid fa-utensils" style="color: var(--theme-primary);"></i> HealthifyMe Daily Meal Tracker</h3>
+              <p style="color: var(--theme-text-muted); font-size: 0.85rem; margin-top: 0.2rem;">Track meals individually to hit your target calories & macros</p>
+            </div>
+            <button class="btn-action" id="btn-quick-add-food-global" style="background: var(--theme-primary); color: #000;">
+              <i class="fa-solid fa-plus"></i> Search & Add Food
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem;">
+            <!-- Breakfast Card -->
+            <div class="meal-slot-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--theme-panel-border); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                  <span style="font-weight: 700; font-size: 1.1rem; color: #ffb703;"><i class="fa-solid fa-sun" style="margin-right: 0.4rem;"></i> Breakfast</span>
+                  <span style="font-size: 0.8rem; background: rgba(255,183,3,0.15); color: #ffb703; padding: 0.2rem 0.6rem; border-radius: 100px; font-weight: 600;" id="meal-cal-breakfast">0 / 550 kcal</span>
+                </div>
+                <div id="meal-items-breakfast" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; min-height: 48px;">
+                  <p style="color: var(--theme-text-muted); font-size: 0.8rem; font-style: italic;">No items logged yet</p>
+                </div>
+              </div>
+              <button class="btn-secondary btn-add-meal-item" data-meal="breakfast" style="width: 100%; padding: 0.5rem; font-size: 0.85rem; text-align: center; border-radius: 10px;">
+                <i class="fa-solid fa-plus"></i> Add Breakfast
+              </button>
+            </div>
+
+            <!-- Lunch Card -->
+            <div class="meal-slot-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--theme-panel-border); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                  <span style="font-weight: 700; font-size: 1.1rem; color: var(--theme-primary);"><i class="fa-solid fa-bowl-food" style="margin-right: 0.4rem;"></i> Lunch</span>
+                  <span style="font-size: 0.8rem; background: rgba(102,252,241,0.15); color: var(--theme-primary); padding: 0.2rem 0.6rem; border-radius: 100px; font-weight: 600;" id="meal-cal-lunch">0 / 750 kcal</span>
+                </div>
+                <div id="meal-items-lunch" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; min-height: 48px;">
+                  <p style="color: var(--theme-text-muted); font-size: 0.8rem; font-style: italic;">No items logged yet</p>
+                </div>
+              </div>
+              <button class="btn-secondary btn-add-meal-item" data-meal="lunch" style="width: 100%; padding: 0.5rem; font-size: 0.85rem; text-align: center; border-radius: 10px;">
+                <i class="fa-solid fa-plus"></i> Add Lunch
+              </button>
+            </div>
+
+            <!-- Evening Snack Card -->
+            <div class="meal-slot-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--theme-panel-border); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                  <span style="font-weight: 700; font-size: 1.1rem; color: #0af0be;"><i class="fa-solid fa-mug-hot" style="margin-right: 0.4rem;"></i> Evening Snack</span>
+                  <span style="font-size: 0.8rem; background: rgba(10,240,190,0.15); color: #0af0be; padding: 0.2rem 0.6rem; border-radius: 100px; font-weight: 600;" id="meal-cal-snack">0 / 350 kcal</span>
+                </div>
+                <div id="meal-items-snack" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; min-height: 48px;">
+                  <p style="color: var(--theme-text-muted); font-size: 0.8rem; font-style: italic;">No items logged yet</p>
+                </div>
+              </div>
+              <button class="btn-secondary btn-add-meal-item" data-meal="snack" style="width: 100%; padding: 0.5rem; font-size: 0.85rem; text-align: center; border-radius: 10px;">
+                <i class="fa-solid fa-plus"></i> Add Snack
+              </button>
+            </div>
+
+            <!-- Dinner Card -->
+            <div class="meal-slot-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--theme-panel-border); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                  <span style="font-weight: 700; font-size: 1.1rem; color: #ff007f;"><i class="fa-solid fa-moon" style="margin-right: 0.4rem;"></i> Dinner</span>
+                  <span style="font-size: 0.8rem; background: rgba(255,0,127,0.15); color: #ff007f; padding: 0.2rem 0.6rem; border-radius: 100px; font-weight: 600;" id="meal-cal-dinner">0 / 650 kcal</span>
+                </div>
+                <div id="meal-items-dinner" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; min-height: 48px;">
+                  <p style="color: var(--theme-text-muted); font-size: 0.8rem; font-style: italic;">No items logged yet</p>
+                </div>
+              </div>
+              <button class="btn-secondary btn-add-meal-item" data-meal="dinner" style="width: 100%; padding: 0.5rem; font-size: 0.85rem; text-align: center; border-radius: 10px;">
+                <i class="fa-solid fa-plus"></i> Add Dinner
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Micro-Nutrients Widget -->
+        <div class="glass-panel col-12">
+          <div class="panel-header" style="align-items: center;">
+            <div>
+              <h3 class="panel-title"><i class="fa-solid fa-seedling"></i> Daily Micro-Nutrients & Health Indicators</h3>
+              <p style="color: var(--theme-text-muted); font-size: 0.85rem; margin-top: 0.2rem;">Derived from whole foods to optimize biological defense systems.</p>
+            </div>
+            <button type="button" class="btn-secondary" id="btn-open-micro-breakdown" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 8px;">
+              <i class="fa-solid fa-microscope" style="color: var(--theme-secondary);"></i> HealthifyMe Micro Insights
+            </button>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
+            <!-- Magnesium -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span>Magnesium (Mg)</span>
+                  <span id="micro-magnesium-status" class="badge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; background: rgba(255,255,255,0.08); color: var(--theme-text-muted);">Deficient</span>
+                </div>
+                <span id="micro-magnesium-text">0mg / 400mg</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-primary" id="micro-magnesium-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+            <!-- Zinc -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span>Zinc (Zn)</span>
+                  <span id="micro-zinc-status" class="badge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; background: rgba(255,255,255,0.08); color: var(--theme-text-muted);">Deficient</span>
+                </div>
+                <span id="micro-zinc-text">0mg / 15mg</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-secondary" id="micro-zinc-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+            <!-- Vitamin D -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span>Vitamin D</span>
+                  <span id="micro-vitd-status" class="badge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; background: rgba(255,255,255,0.08); color: var(--theme-text-muted);">Deficient</span>
+                </div>
+                <span id="micro-vitd-text">0 IU / 2000 IU</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-orange" id="micro-vitd-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+            <!-- Potassium -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span>Potassium (K)</span>
+                  <span id="micro-potassium-status" class="badge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; background: rgba(255,255,255,0.08); color: var(--theme-text-muted);">Deficient</span>
+                </div>
+                <span id="micro-potassium-text">0mg / 3500mg</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-blue" id="micro-potassium-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+            <!-- Omega-3 -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span>Omega-3 Fats</span>
+                  <span id="micro-omega3-status" class="badge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; background: rgba(255,255,255,0.08); color: var(--theme-text-muted);">Deficient</span>
+                </div>
+                <span id="micro-omega3-text">0g / 2.0g</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-primary" id="micro-omega3-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+            <!-- Calcium -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span>Calcium (Ca)</span>
+                  <span id="micro-calcium-status" class="badge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; background: rgba(255,255,255,0.08); color: var(--theme-text-muted);">Deficient</span>
+                </div>
+                <span id="micro-calcium-text">0mg / 1000mg</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-secondary" id="micro-calcium-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+            <!-- Iron -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span>Iron (Fe)</span>
+                  <span id="micro-iron-status" class="badge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; background: rgba(255,255,255,0.08); color: var(--theme-text-muted);">Deficient</span>
+                </div>
+                <span id="micro-iron-text">0mg / 12mg</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill bg-orange" id="micro-iron-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB: WORKOUT LIBRARY -->
+    <section id="tab-workouts" class="tab-content">
+      <div class="workout-split-selector">
+        <button class="split-btn active" data-split="beginner">Beginner Plan</button>
+        <button class="split-btn" data-split="intermediate">Intermediate Plan</button>
+        <button class="split-btn" data-split="expert">Expert Plan</button>
+        <button class="split-btn" data-split="custom">Custom Plan</button>
+      </div>
+
+      <div class="workout-plan-container">
+        
+        <!-- Left Side: List of Exercises and Daily Routines -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          
+          <!-- Detailed Plan Description -->
+          <div class="glass-panel" style="margin-bottom: 0;">
+            <h3 class="panel-title" id="routine-plan-title">Nature Initiation Plan</h3>
+            <p style="color: var(--theme-text-muted); font-size: 0.95rem; margin-top: 0.5rem; line-height: 1.5;" id="routine-plan-desc">
+              Focus on building fundamental motor patterns, developing baseline connective tissue strength, and conditioning the heart naturally.
+            </p>
+            <!-- Week selector for Custom Plan -->
+            <div id="workout-week-selector-container" style="display: none; margin-top: 1rem; border-top: 1px solid var(--theme-panel-border); padding-top: 1rem;">
+              <span style="font-size: 0.85rem; color: var(--theme-text-muted); margin-right: 0.75rem; font-weight: 600;">SELECT WEEK:</span>
+              <div class="button-group" style="display: inline-flex;">
+                <button class="btn-toggle active week-btn" data-week="1">Week 1</button>
+                <button class="btn-toggle week-btn" data-week="2">Week 2</button>
+                <button class="btn-toggle week-btn" data-week="3">Week 3</button>
+                <button class="btn-toggle week-btn" data-week="4">Week 4</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Routine Days Table -->
+          <div class="glass-panel" style="margin-bottom: 0;">
+            <div class="panel-header">
+              <h3 class="panel-title"><i class="fa-solid fa-calendar-day"></i> Weekly Schedule</h3>
+            </div>
+            <div class="routine-table-wrapper">
+              <table class="routine-table" style="table-layout: fixed; width: 100%;">
+                <thead>
+                  <tr>
+                    <th style="width: 15%;">Day</th>
+                    <th style="width: 15%;">Focus Style</th>
+                    <th style="width: 70%;">Routine / Exercises</th>
+                  </tr>
+                </thead>
+                <tbody id="routine-table-body">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Interactive Exercise Cards -->
+          <div class="glass-panel collapsible-panel" id="movement-directory-panel">
+            <div class="panel-header" id="movement-directory-header" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <div>
+                <h3 class="panel-title"><i class="fa-solid fa-circle-info"></i> Movement Directory</h3>
+                <p style="color: var(--theme-text-muted); font-size: 0.8rem;">Click to activate target muscle graphic</p>
+              </div>
+              <i class="fa-solid fa-chevron-down movement-directory-chevron" style="transition: transform 0.3s; color: var(--theme-text-muted);"></i>
+            </div>
+            <div class="exercise-list" id="exercise-cards-list" style="display: none; margin-top: 1.25rem;">
+              <!-- Injected via JavaScript -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Side: Anatomical SVG Visualizer & Detailed Guide -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          
+          <div class="glass-panel" style="position: sticky; top: 2.5rem; z-index: 10;" id="muscle-map-panel">
+            <div class="panel-header">
+              <h3 class="panel-title"><i class="fa-solid fa-child"></i> Muscle Activation Map</h3>
+            </div>
+            
+            <div class="visualizer-wrapper" id="muscle-map-container">
+              <!-- SVG Body Map Injected here -->
+            </div>
+
+            <!-- Selected Exercise Anatomy Info -->
+            <div style="margin-top: 1.5rem; border-top: 1px solid var(--theme-panel-border); padding-top: 1.5rem;" id="exercise-anatomy-info">
+              <h4 style="font-family: var(--font-display); font-size: 1.15rem; margin-bottom: 0.5rem;" id="selected-exercise-name">Select an exercise</h4>
+              <p style="color: var(--theme-text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;" id="selected-exercise-instruction">
+                Click any exercise card from the directory to review detailed instructions, Tamil & English instructional videos, and highlight muscle systems.
+              </p>
+              
+              <div class="exercise-card-actions" style="margin-top: 1rem;" id="selected-exercise-video-actions">
+                <!-- Video buttons injected here -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB: NUTRITION PLAN -->
+    <section id="tab-diet" class="tab-content">
+      <div class="diet-grid">
+        
+        <!-- Left Side: Meal Schedule -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-utensils"></i> Meal Schedule</h3>
+            <span class="badge success" id="diet-track-badge">Natural Track</span>
+          </div>
+          <p style="color: var(--theme-text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;" id="diet-philosophy">
+            We thrive on what the Earth provides. We avoid processed chemicals and focus on high-density raw foods, organic proteins, and clean hydration.
+          </p>
+
+          <div class="diet-type-selector" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); padding: 0.35rem; border-radius: 8px; border: 1px solid var(--theme-panel-border);">
+            <button class="diet-type-btn active" data-type="nonveg" style="flex: 1; padding: 0.45rem; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s; background: var(--theme-primary); color: #000;">Non-Veg</button>
+            <button class="diet-type-btn" data-type="veg" style="flex: 1; padding: 0.45rem; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--theme-text-muted);">Veg</button>
+            <button class="diet-type-btn" data-type="vegan" style="flex: 1; padding: 0.45rem; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--theme-text-muted);">Vegan</button>
+            <button class="diet-type-btn" data-type="custom" style="flex: 1; padding: 0.45rem; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--theme-text-muted);">Custom</button>
+          </div>
+
+          <div class="meal-plan-list" id="meal-plan-list">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Right Side: Supplements & Hydration Support -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          
+          <div class="glass-panel">
+            <div class="panel-header">
+              <h3 class="panel-title"><i class="fa-solid fa-prescription-bottle-medical"></i> Micronutrients & Adaptogens</h3>
+            </div>
+            <ul class="bullet-list" id="diet-supplements-list">
+              <!-- Injected dynamically -->
+            </ul>
+          </div>
+
+          <div class="glass-panel">
+            <div class="panel-header">
+              <h3 class="panel-title"><i class="fa-solid fa-faucet-drip"></i> Hydration Protocol</h3>
+            </div>
+            <ul class="bullet-list">
+              <li><strong>Volume Target:</strong> Maintain a minimum of 3.5L to 4.5L of pure mineralized water daily.</li>
+              <li><strong>Electrolytes:</strong> Add a pinch of Celtic or Pink Himalayan salt to your morning water to restore adrenal functions.</li>
+              <li><strong>Digestion Support:</strong> Drink 15ml of organic Apple Cider Vinegar in warm water before the first meal to stimulate stomach acid.</li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB: RECOVERY STRATEGY -->
+    <section id="tab-recovery" class="tab-content">
+      <div class="panel-header" style="margin-bottom: 2rem;">
+        <div class="header-title">
+          <h2 id="recovery-title">Natural Recovery & Adaptation Protocol</h2>
+          <p style="color: var(--theme-text-muted);">Slowing down nervous system arousal to allow maximum cellular regeneration.</p>
+        </div>
+      </div>
+
+      <div class="recovery-grid" id="recovery-strategies-container">
+        <!-- Recovery Cards Injected dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB: CALORIE TRACKER -->
+    <section id="tab-tracker" class="tab-content">
+      <div class="glass-panel">
+        <div class="chart-controls">
+          <div class="panel-title"><i class="fa-solid fa-chart-area"></i> Tracker Analytics</div>
+          
+          <div class="chart-controls-toggles">
+            <!-- Metric Toggle -->
+            <div class="button-group">
+              <button class="btn-toggle active metric-btn" data-metric="calories">Calories</button>
+              <button class="btn-toggle metric-btn" data-metric="weight">Weight</button>
+            </div>
+            
+            <!-- Range Toggle -->
+            <div class="button-group">
+              <button class="btn-toggle active range-btn" data-range="weekly">Weekly</button>
+              <button class="btn-toggle range-btn" data-range="monthly">Monthly</button>
+              <button class="btn-toggle range-btn" data-range="yearly">Yearly</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="position: relative; width: 100%; height: 320px; background: rgba(0,0,0,0.15); border-radius: 16px; border: 1px solid var(--theme-panel-border); padding: 1rem; overflow: hidden;">
+          <canvas id="analytics-canvas" style="width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+
+      <div class="glass-panel">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="fa-solid fa-file-signature"></i> Add New Tracker Entry</h3>
+        </div>
+
+        <form id="tracker-log-form">
+          <div style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--theme-panel-border); margin-bottom: 1.5rem;">
+            <h4 style="font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--theme-primary);"></i> Natural Language Meal Logger</h4>
+            <p style="color: var(--theme-text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Type what you ate (with quantities) to instantly parse and fill in the macros/micros. (e.g. "200g chicken, 2 eggs, 1 banana")</p>
+            <div class="nlp-logger-row">
+              <input type="text" id="track-nlp-input" placeholder="e.g. 200g chicken, 2 eggs, 1 banana" style="flex-grow: 1; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--theme-panel-border); padding: 0.75rem 1rem; border-radius: 12px; color: var(--theme-text-main); font-family: var(--font-body); outline: none;">
+              <div style="display: flex; gap: 0.75rem;">
+                <button type="button" class="btn-action" id="btn-scan-meal-tracker" style="background: var(--theme-secondary); color: #000; flex: 1; justify-content: center;">
+                  <i class="fa-solid fa-camera"></i> Scan
+                </button>
+                <button type="button" class="btn-action" id="btn-parse-nlp" style="background: var(--theme-primary); color: #000; flex: 1; justify-content: center;">
+                  <i class="fa-solid fa-calculator"></i> Analyze
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="track-log-date">Entry Date</label>
+              <input type="date" id="track-log-date" required>
+            </div>
+            <div class="form-group">
+              <label for="track-log-calories">Calories Consumed (kcal)</label>
+              <input type="number" id="track-log-calories" placeholder="e.g. 2650" required>
+            </div>
+            <div class="form-group">
+              <label for="track-log-protein">Protein (g)</label>
+              <input type="number" id="track-log-protein" placeholder="e.g. 150" required>
+            </div>
+            <div class="form-group">
+              <label for="track-log-carbs">Carbs (g)</label>
+              <input type="number" id="track-log-carbs" placeholder="e.g. 300" required>
+            </div>
+            <div class="form-group">
+              <label for="track-log-fats">Fats (g)</label>
+              <input type="number" id="track-log-fats" placeholder="e.g. 75" required>
+            </div>
+            <div class="form-group">
+              <label for="track-log-water">Water Intake (ml)</label>
+              <input type="number" id="track-log-water" placeholder="e.g. 3500" required>
+            </div>
+            <div class="form-group">
+              <label for="track-log-duration">Workout Duration (mins)</label>
+              <input type="number" id="track-log-duration" placeholder="e.g. 60">
+            </div>
+            <div class="form-group">
+              <label for="track-log-style">Workout Style</label>
+              <select id="track-log-style">
+                <option value="">None / Rest Day</option>
+                <option value="VO2max">VO2max Cardiovascular</option>
+                <option value="HIIT">HIIT (Intervals)</option>
+                <option value="Strength">Strength & Power</option>
+                <option value="Metabolism Circuit">Metabolism Circuit</option>
+                <option value="Machine Focus">Machine Isolation</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="track-log-weight">Morning Weight (kg)</label>
+              <input type="number" step="0.1" id="track-log-weight" placeholder="e.g. 76.5">
+            </div>
+            <div class="form-group" style="display: flex; justify-content: flex-end; align-items: flex-end;">
+              <div class="checkbox-group" style="margin-bottom: 0.85rem;">
+                <input type="checkbox" id="track-log-workout-completed">
+                <label for="track-log-workout-completed">Workout Completed</label>
+              </div>
+            </div>
+            <div class="form-group full-width">
+              <label for="track-log-notes">Daily Log Notes</label>
+              <textarea id="track-log-notes" rows="3" placeholder="Felt energetic, solid sleep quality, complete recovery..."></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn-action">
+            <i class="fa-solid fa-floppy-disk"></i> Save Day Entry
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- TAB: IDEAL WEIGHT & CALORIE DEFICIT ENGINE -->
+    <section id="tab-ideal-weight" class="tab-content">
+      <div class="glass-panel" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(var(--theme-primary-rgb), 0.12), rgba(0, 242, 254, 0.05)); border: 1px solid rgba(var(--theme-primary-rgb), 0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: var(--theme-text-main); margin-bottom: 0.2rem;">
+              <i class="fa-solid fa-bullseye" style="color: var(--theme-primary);"></i> Ideal Weight & Calorie Deficit Engine
+            </h2>
+            <p style="color: var(--theme-text-muted); font-size: 0.9rem;">
+              Capture your height and weight to receive your medical ideal weight, target calorie deficit, macro breakdown, and workout recommendations.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button id="btn-engine-unit-toggle" class="btn-secondary" style="padding: 0.45rem 0.9rem; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+              Metric (cm, kg)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- 1. Height & Weight Inputs Panel -->
+        <div class="glass-panel col-6">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-ruler-combined" style="color: var(--theme-primary);"></i> 1. Body Metrics Capture</h3>
+            <span class="badge primary" id="engine-height-weight-tag">175 cm • 85 kg</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <!-- Biological Sex -->
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.85rem; font-weight: 600; color: var(--theme-text-muted);">Biological Sex</span>
+              <div style="display: flex; background: rgba(0,0,0,0.25); padding: 4px; border-radius: 10px; border: 1px solid var(--theme-panel-border); gap: 4px;">
+                <button type="button" class="engine-sex-btn active" id="engine-sex-male" style="padding: 6px 16px; font-size: 0.82rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s ease;">Male</button>
+                <button type="button" class="engine-sex-btn" id="engine-sex-female" style="padding: 6px 16px; font-size: 0.82rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s ease;">Female</button>
+              </div>
+            </div>
+
+            <!-- Height Slider -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.4rem;">
+                <span style="color: var(--theme-text-muted);">Height</span>
+                <span id="engine-height-val" style="font-weight: 700; color: var(--theme-primary);">175 cm</span>
+              </div>
+              <div id="engine-height-metric-container">
+                <input type="range" id="engine-height-slider" min="130" max="220" value="175" class="custom-slider" style="width: 100%; cursor: pointer;" />
+              </div>
+              <div id="engine-height-imperial-container" style="display: none; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <input type="number" id="engine-feet-input" min="4" max="7" value="5" class="custom-num-input" placeholder="Feet" />
+                <input type="number" id="engine-inches-input" min="0" max="11" value="9" class="custom-num-input" placeholder="Inches" />
+              </div>
+            </div>
+
+            <!-- Weight Slider -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.4rem;">
+                <span style="color: var(--theme-text-muted);">Current Weight</span>
+                <span id="engine-weight-val" style="font-weight: 700; color: var(--theme-primary);">85 kg</span>
+              </div>
+              <input type="range" id="engine-weight-slider" min="40" max="200" step="0.5" value="85" class="custom-slider" style="width: 100%; cursor: pointer;" />
+            </div>
+
+            <!-- Age & Activity Level -->
+            <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 0.75rem;">
+              <div>
+                <label style="font-size: 0.78rem; color: var(--theme-text-muted); display: block; margin-bottom: 0.25rem;">Age (Years)</label>
+                <input type="number" id="engine-age-input" min="15" max="90" value="28" class="custom-num-input" />
+              </div>
+              <div>
+                <label style="font-size: 0.78rem; color: var(--theme-text-muted); display: block; margin-bottom: 0.25rem;">Daily Activity Level</label>
+                <select id="engine-activity-select" class="custom-select">
+                  <option value="sedentary">Sedentary (Little/no exercise)</option>
+                  <option value="light">Lightly Active (1-3 days/wk)</option>
+                  <option value="moderate" selected>Moderately Active (3-5 days/wk)</option>
+                  <option value="very_active">Very Active (6-7 days/wk)</option>
+                  <option value="extra_active">Extra Active (Heavy training)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Goal Pace & Equipment -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <div>
+                <label style="font-size: 0.78rem; color: var(--theme-text-muted); display: block; margin-bottom: 0.25rem;">Fitness Goal & Deficit Pace</label>
+                <select id="engine-goal-select" class="custom-select">
+                  <option value="aggressive_loss">Aggressive Fat Loss (-750 kcal)</option>
+                  <option value="fat_loss" selected>Optimal Fat Loss (-500 kcal)</option>
+                  <option value="maintenance">Weight Maintenance (TDEE)</option>
+                  <option value="lean_gain">Lean Muscle Surplus (+300 kcal)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 0.78rem; color: var(--theme-text-muted); display: block; margin-bottom: 0.25rem;">Equipment Available</label>
+                <select id="engine-equipment-select" class="custom-select">
+                  <option value="gym" selected>Full Gym (Barbell/Cables)</option>
+                  <option value="dumbbells">Home / Dumbbells Only</option>
+                  <option value="bodyweight">Bodyweight Only</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Ideal Weight & BMI Gauge Box -->
+        <div class="glass-panel col-6" style="border: 1px solid rgba(var(--theme-primary-rgb), 0.3);">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-award" style="color: var(--theme-primary);"></i> 2. Ideal Weight Analysis</h3>
+            <span class="badge highlight">WHO & Devine Formula</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div style="background: rgba(var(--theme-primary-rgb), 0.08); border: 1px solid rgba(var(--theme-primary-rgb), 0.25); border-radius: 16px; padding: 1.25rem; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+              <span style="font-size: 0.7rem; font-weight: 800; color: var(--theme-primary); letter-spacing: 0.5px;">RECOMMENDED IDEAL WEIGHT</span>
+              <div style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 800; color: #FFF; line-height: 1.1; margin: 0.25rem 0;" id="engine-ideal-val">
+                68.5 <span style="font-size: 1.1rem; color: var(--theme-primary);" id="engine-ideal-unit">kg</span>
+              </div>
+              <span style="font-size: 0.78rem; color: var(--theme-text-muted);" id="engine-healthy-band">Healthy Band: <strong>56.7 – 76.3 kg</strong></span>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid var(--theme-panel-border); padding: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+              <svg viewBox="0 0 200 110" style="width: 150px; height: 85px;">
+                <defs>
+                  <linearGradient id="engineBmiGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#FFB703" />
+                    <stop offset="35%" stop-color="#00F2FE" />
+                    <stop offset="70%" stop-color="#FF9000" />
+                    <stop offset="100%" stop-color="#FF4D6D" />
+                  </linearGradient>
+                </defs>
+                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#engineBmiGrad)" stroke-width="16" stroke-linecap="round" />
+                <g id="engine-bmi-needle" transform="rotate(0, 100, 100)">
+                  <line x1="100" y1="100" x2="100" y2="35" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" />
+                  <circle cx="100" cy="100" r="7" fill="#00F2FE" />
+                </g>
+              </svg>
+              <div style="text-align: center; margin-top: -8px;">
+                <span style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--theme-primary);" id="engine-bmi-num">27.8</span>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #FF9000; display: block;" id="engine-bmi-cat">Overweight</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weight Gap & Goal Forecast -->
+          <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--theme-panel-border); padding: 1rem; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--theme-primary);" id="engine-gap-title">Weight Deficit Target: -16.5 kg</span>
+              <p style="font-size: 0.75rem; color: var(--theme-text-muted);" id="engine-gap-sub">Devine Target: 71.3 kg • WHO Normal BMI: 18.5 - 24.9</p>
+            </div>
+            <span style="font-size: 0.75rem; font-weight: 700; background: rgba(var(--theme-primary-rgb), 0.15); color: var(--theme-primary); padding: 6px 12px; border-radius: 12px;" id="engine-timeline-tag">Est. 33 weeks</span>
+          </div>
+        </div>
+
+        <!-- 3. Calorie Deficit & Macro Targets Panel -->
+        <div class="glass-panel col-6">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-fire" style="color: #FF9000;"></i> 3. Calorie Deficit & Macro Target Breakdown</h3>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--theme-panel-border); padding: 0.85rem; border-radius: 12px;">
+              <span style="font-size: 0.68rem; color: var(--theme-text-muted); text-transform: uppercase;">BMR (REST)</span>
+              <div style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700;" id="engine-bmr-val">1,780 kcal</div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--theme-panel-border); padding: 0.85rem; border-radius: 12px;">
+              <span style="font-size: 0.68rem; color: var(--theme-text-muted); text-transform: uppercase;">TDEE (SPEND)</span>
+              <div style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: #FF9000;" id="engine-tdee-val">2,759 kcal</div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(255,144,0,0.15), rgba(var(--theme-primary-rgb),0.1)); border: 1px solid rgba(255,144,0,0.3); padding: 0.85rem; border-radius: 12px;">
+              <span style="font-size: 0.68rem; color: #FF9000; font-weight: 800;">TARGET CALORIES</span>
+              <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: #FFF;" id="engine-target-cal-val">2,259 kcal</div>
+            </div>
+          </div>
+
+          <!-- Macro Cards -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+            <div style="background: rgba(0,242,254,0.08); border: 1px solid rgba(0,242,254,0.2); padding: 0.85rem; border-radius: 12px;">
+              <span style="font-size: 0.72rem; font-weight: 700; color: var(--theme-primary);">Protein (2.0g/kg)</span>
+              <div style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; margin: 2px 0;" id="engine-protein-val">170g</div>
+              <span style="font-size: 0.68rem; color: var(--theme-text-muted);" id="engine-protein-cal">680 kcal</span>
+            </div>
+
+            <div style="background: rgba(255,144,0,0.08); border: 1px solid rgba(255,144,0,0.2); padding: 0.85rem; border-radius: 12px;">
+              <span style="font-size: 0.72rem; font-weight: 700; color: #FF9000;">Carbohydrates</span>
+              <div style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; margin: 2px 0;" id="engine-carbs-val">252g</div>
+              <span style="font-size: 0.68rem; color: var(--theme-text-muted);" id="engine-carbs-cal">1,008 kcal</span>
+            </div>
+
+            <div style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); padding: 0.85rem; border-radius: 12px;">
+              <span style="font-size: 0.72rem; font-weight: 700; color: #10B981;">Healthy Fats</span>
+              <div style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; margin: 2px 0;" id="engine-fats-val">63g</div>
+              <span style="font-size: 0.68rem; color: var(--theme-text-muted);" id="engine-fats-cal">567 kcal</span>
+            </div>
+          </div>
+
+          <!-- Apply Targets to Profile & Daily Tracker -->
+          <button type="button" class="btn-action" id="btn-engine-apply-to-tracker" style="width: 100%; margin-top: 1rem; padding: 0.65rem; font-size: 0.85rem; background: var(--theme-primary); color: #000; font-weight: 700; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            <i class="fa-solid fa-check-double"></i> Sync Targets to Profile & Daily Tracker
+          </button>
+        </div>
+
+        <!-- 4. Customized Workout Recommendations Panel -->
+        <div class="glass-panel col-6">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-dumbbell" style="color: var(--theme-primary);"></i> 4. Tailored Workout Routine</h3>
+            <span class="badge primary" id="engine-split-tag">Push / Pull / Legs</span>
+          </div>
+
+          <div id="engine-workout-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Workout days items will be populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: PHILOSOPHY -->
+    <section id="tab-philosophy" class="tab-content">
+      <div class="glass-panel philosophy-banner">
+        <h2 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 800; margin-bottom: 1rem;">
+          "Give Away What We Got From Nature"
+        </h2>
+        <p style="font-size: 1.1rem; line-height: 1.6; max-width: 900px; color: var(--theme-text-main);">
+          Everything we achieve in health, vitality, and physical perfection is a gift from nature. Our ultimate mission is not to monetize this knowledge restrictively, but to give it back. We provide raw, unadulterated fitness science—freely shared and transparently categorized. We represent a sustainable, eco-attuned approach to structural strength and cardiovascular mastery.
+        </p>
+      </div>
+
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <h3>Dual Track Science</h3>
+          <p style="font-size: 0.9rem; color: var(--theme-text-muted); line-height: 1.5; margin-top: 0.5rem;">
+            Most platforms hide the realities of training behind marketing lies. We distinguish objectively between <strong>Natural Pathways</strong> (aligned with organic rhythms, biological recovery rates, adaptogens) and <strong>Enhanced Pathways</strong> (prioritizing harm reduction, rigorous organ support, blood lipid management, and cardiovascular defense).
+          </p>
+        </div>
+
+        <div class="philosophy-card">
+          <h3>True Energy System Tuning</h3>
+          <p style="font-size: 0.9rem; color: var(--theme-text-muted); line-height: 1.5; margin-top: 0.5rem;">
+            We don't offer generic templates. We explicitly target biological adaptions: expansion of VO2max stroke volume, glycolytic efficiency in Metabolism Circuits, neural adaptation in heavy Strength lifts, and hyper-focal targeting in Machine Isolation.
+          </p>
+        </div>
+
+        <div class="philosophy-card">
+          <h3>No Paywalls, Just Science</h3>
+          <p style="font-size: 0.9rem; color: var(--theme-text-muted); line-height: 1.5; margin-top: 0.5rem;">
+            All instructions, primary and secondary muscle activation maps, recovery formulas, and bilingual videos (Tamil + English) are built openly. Nature gives without limits, and so do we.
+          </p>
+        </div>
+      </div>
+
+      <div class="glass-panel" style="margin-top: 2rem; border-left: 4px solid var(--theme-primary);">
+        <h3 style="font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-info"></i> Author's Disclaimer</h3>
+        <p style="font-size: 0.95rem; color: var(--theme-text-muted); line-height: 1.6;">
+          I design practical workout plans based on 20 years of training experience, focused on structure, progression, and easy mobile use. 
+          <strong>Disclaimer:</strong> I am not a certified professional trainer or coach, I am just sharing my experience.
+        </p>
+      </div>
+    </section>
+
+    <!-- TAB: PEDOMETER -->
+    <section id="tab-pedometer" class="tab-content">
+      <div class="glass-panel" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(0, 242, 254, 0.12), rgba(var(--theme-primary-rgb), 0.08)); border: 1px solid rgba(0, 242, 254, 0.3); border-radius: 20px; padding: 1.5rem;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+          <div>
+            <h2 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: #FFF; display: flex; align-items: center; gap: 0.6rem;">
+              <i class="fa-solid fa-shoe-prints" style="color: #00f2fe;"></i> <span data-i18n="pedometer-title">Foot Step Calculator & Live Pedometer</span>
+            </h2>
+            <p style="color: var(--theme-text-muted); font-size: 0.9rem; margin-top: 0.3rem;" data-i18n="pedometer-subtitle">
+              Real-time accelerometer step tracking, biometric stride calculations, and activity estimates.
+            </p>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn-action" id="pedometer-btn-toggle-session" style="background: linear-gradient(135deg, #00f2fe, #4facfe); color: #000; font-weight: 700; border: none; padding: 0.65rem 1.25rem; border-radius: 12px; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);">
+              <i class="fa-solid fa-play" id="pedometer-session-icon"></i> <span id="pedometer-session-btn-text" data-i18n="pedometer-start-walk">Start Walking Session</span>
+            </button>
+            <button class="btn-secondary" id="pedometer-btn-reset-session" style="padding: 0.65rem 1rem; border-radius: 12px; font-size: 0.85rem;" title="Reset Live Session">
+              <i class="fa-solid fa-rotate-left"></i> <span data-i18n="pedometer-reset-session">Reset Session</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1.5rem; margin-top: 1.25rem; font-size: 0.82rem; color: var(--theme-text-muted); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.85rem; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <i class="fa-solid fa-tower-broadcast" style="color: #00f2fe;"></i>
+            <span>Motion Sensor:</span>
+            <strong id="pedometer-sensor-status" style="color: #4cd964;">Active Accelerometer</strong>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <i class="fa-solid fa-ruler-vertical" style="color: var(--theme-primary);"></i>
+            <span>Est. Stride Length:</span>
+            <strong id="pedometer-stride-info" style="color: #FFF;">74.5 cm</strong>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <i class="fa-solid fa-volume-high" style="color: #ffb703; cursor: pointer;" id="pedometer-toggle-audio"></i>
+            <span>Audio Milestones:</span>
+            <strong id="pedometer-audio-status" style="color: #FFF;">On (Beep every 1k steps)</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Counter Gauge & Metric Cards Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+        
+        <!-- SVG Gauge Card -->
+        <div class="glass-panel" style="text-align: center; padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <div style="position: relative; width: 220px; height: 220px;">
+            <svg width="220" height="220" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.06)" stroke-width="8" fill="none"></circle>
+              <circle id="pedometer-main-ring" cx="50" cy="50" r="42" stroke="#00f2fe" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="263.89" stroke-dashoffset="263.89" transform="rotate(-90 50 50)" style="transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.5));"></circle>
+            </svg>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+              <i class="fa-solid fa-shoe-prints" style="font-size: 1.6rem; color: #00f2fe; margin-bottom: 0.25rem;"></i>
+              <div id="pedometer-steps-count" style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 800; line-height: 1; color: #FFF;">0</div>
+              <div id="pedometer-goal-target" style="font-size: 0.85rem; color: var(--theme-text-muted); margin-top: 0.25rem;">/ 10,000 steps</div>
+              <div id="pedometer-goal-pct" style="font-size: 0.95rem; font-weight: 700; color: #00f2fe; margin-top: 0.4rem;">0% Achieved</div>
+            </div>
+          </div>
+
+          <!-- Quick Simulation Increment Buttons -->
+          <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+            <span style="font-size: 0.75rem; color: var(--theme-text-muted); width: 100%; margin-bottom: 0.2rem;" data-i18n="pedometer-sim-label">Desktop Step Simulation Controls:</span>
+            <button class="btn-secondary" id="pedometer-sim-100" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; border-radius: 8px;">+100</button>
+            <button class="btn-secondary" id="pedometer-sim-500" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; border-radius: 8px;">+500</button>
+            <button class="btn-secondary" id="pedometer-sim-1000" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; border-radius: 8px; background: rgba(0, 242, 254, 0.15); color: #00f2fe; border-color: rgba(0, 242, 254, 0.3);">+1,000</button>
+          </div>
+        </div>
+
+        <!-- Metric Summary 4-Grid Card -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+          
+          <!-- Distance -->
+          <div class="glass-panel" style="padding: 1.25rem; border-left: 4px solid #00f2fe;">
+            <div style="display: flex; align-items: center; gap: 0.6rem; color: var(--theme-text-muted); font-size: 0.8rem; text-transform: uppercase;">
+              <i class="fa-solid fa-route" style="color: #00f2fe;"></i> <span data-i18n="pedometer-dist-label">Distance Walked</span>
+            </div>
+            <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-top: 0.5rem; color: #FFF;" id="pedometer-dist-val">0.00 <span style="font-size: 1rem; color: var(--theme-text-muted);">km</span></h3>
+            <p style="font-size: 0.78rem; color: var(--theme-text-muted); margin-top: 0.25rem;" id="pedometer-dist-miles">0.00 miles</p>
+          </div>
+
+          <!-- Calories -->
+          <div class="glass-panel" style="padding: 1.25rem; border-left: 4px solid #ff5252;">
+            <div style="display: flex; align-items: center; gap: 0.6rem; color: var(--theme-text-muted); font-size: 0.8rem; text-transform: uppercase;">
+              <i class="fa-solid fa-fire" style="color: #ff5252;"></i> <span data-i18n="pedometer-kcal-label">Energy Burned</span>
+            </div>
+            <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-top: 0.5rem; color: #FFF;" id="pedometer-kcal-val">0 <span style="font-size: 1rem; color: var(--theme-text-muted);">kcal</span></h3>
+            <p style="font-size: 0.78rem; color: var(--theme-text-muted); margin-top: 0.25rem;" id="pedometer-fat-burn">0.0g fat equivalent</p>
+          </div>
+
+          <!-- Walk Duration -->
+          <div class="glass-panel" style="padding: 1.25rem; border-left: 4px solid #ffb703;">
+            <div style="display: flex; align-items: center; gap: 0.6rem; color: var(--theme-text-muted); font-size: 0.8rem; text-transform: uppercase;">
+              <i class="fa-solid fa-clock" style="color: #ffb703;"></i> <span data-i18n="pedometer-time-label">Walk Duration</span>
+            </div>
+            <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-top: 0.5rem; color: #FFF;" id="pedometer-time-val">0 <span style="font-size: 1rem; color: var(--theme-text-muted);">mins</span></h3>
+            <p style="font-size: 0.78rem; color: var(--theme-text-muted); margin-top: 0.25rem;" id="pedometer-cadence-val">0 steps/min cadence</p>
+          </div>
+
+          <!-- Active Pace -->
+          <div class="glass-panel" style="padding: 1.25rem; border-left: 4px solid var(--theme-primary);">
+            <div style="display: flex; align-items: center; gap: 0.6rem; color: var(--theme-text-muted); font-size: 0.8rem; text-transform: uppercase;">
+              <i class="fa-solid fa-stopwatch" style="color: var(--theme-primary);"></i> <span data-i18n="pedometer-pace-label">Walking Pace</span>
+            </div>
+            <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-top: 0.5rem; color: #FFF;" id="pedometer-pace-val">0'00" <span style="font-size: 0.9rem; color: var(--theme-text-muted);">/km</span></h3>
+            <p style="font-size: 0.78rem; color: var(--theme-text-muted); margin-top: 0.25rem;" id="pedometer-stride-val">Stride: 74 cm</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Step Goal Preset Selector & Biometrics adjustment -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+        
+        <!-- Preset Step Goals -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-bullseye" style="color: #00f2fe;"></i> <span data-i18n="pedometer-goal-presets-title">Daily Step Goal Presets</span></h3>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--theme-text-muted); margin-bottom: 1rem;" data-i18n="pedometer-goal-desc">Select your daily walking target based on WHO cardiovascular guidelines.</p>
+          
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem;">
+            <button class="btn-secondary pedometer-goal-btn" data-goal="5000" style="padding: 0.6rem 0.4rem; font-size: 0.85rem; font-weight: 700; border-radius: 10px; text-align: center;">
+              5,000<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--theme-text-muted);">Light</span>
+            </button>
+            <button class="btn-secondary pedometer-goal-btn" data-goal="8000" style="padding: 0.6rem 0.4rem; font-size: 0.85rem; font-weight: 700; border-radius: 10px; text-align: center;">
+              8,000<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--theme-text-muted);">Moderate</span>
+            </button>
+            <button class="btn-secondary pedometer-goal-btn active" data-goal="10000" style="padding: 0.6rem 0.4rem; font-size: 0.85rem; font-weight: 700; border-radius: 10px; text-align: center; background: rgba(0, 242, 254, 0.15); color: #00f2fe; border-color: #00f2fe;">
+              10,000<br><span style="font-size: 0.7rem; font-weight: 400; color: #00f2fe;">Recommended</span>
+            </button>
+            <button class="btn-secondary pedometer-goal-btn" data-goal="12000" style="padding: 0.6rem 0.4rem; font-size: 0.85rem; font-weight: 700; border-radius: 10px; text-align: center;">
+              12,000<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--theme-text-muted);">Active</span>
+            </button>
+            <button class="btn-secondary pedometer-goal-btn" data-goal="15000" style="padding: 0.6rem 0.4rem; font-size: 0.85rem; font-weight: 700; border-radius: 10px; text-align: center;">
+              15,000<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--theme-text-muted);">Athlete</span>
+            </button>
+            <button class="btn-secondary pedometer-goal-btn" data-goal="20000" style="padding: 0.6rem 0.4rem; font-size: 0.85rem; font-weight: 700; border-radius: 10px; text-align: center;">
+              20,000<br><span style="font-size: 0.7rem; font-weight: 400; color: var(--theme-text-muted);">Pro Hiker</span>
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem;">
+            <input type="number" id="pedometer-custom-goal-input" placeholder="Custom step goal (e.g. 7500)" style="flex: 1; padding: 0.55rem; border-radius: 10px; border: 1px solid var(--theme-panel-border); background: rgba(0,0,0,0.25); color: #fff; font-size: 0.85rem;">
+            <button class="btn-action" id="pedometer-save-custom-goal" style="background: var(--theme-primary); color: #000; font-weight: 700; padding: 0.55rem 1rem; border-radius: 10px;">Set</button>
+          </div>
+        </div>
+
+        <!-- Biometric Calibration Settings -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-sliders" style="color: var(--theme-primary);"></i> <span data-i18n="pedometer-biometrics-title">Biometric Calibration</span></h3>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--theme-text-muted); margin-bottom: 1rem;" data-i18n="pedometer-bio-desc">Fine-tune your height & weight for pinpoint distance and energy calculations.</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <div style="display: flex; gap: 1rem; align-items: center;">
+              <label style="flex: 1; font-size: 0.85rem; color: var(--theme-text-main);">Height (cm):</label>
+              <input type="number" id="pedometer-user-height" value="175" style="width: 110px; padding: 0.45rem; border-radius: 8px; border: 1px solid var(--theme-panel-border); background: rgba(0,0,0,0.25); color: #fff; text-align: center;">
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+              <label style="flex: 1; font-size: 0.85rem; color: var(--theme-text-main);">Weight (kg):</label>
+              <input type="number" id="pedometer-user-weight" value="70" style="width: 110px; padding: 0.45rem; border-radius: 8px; border: 1px solid var(--theme-panel-border); background: rgba(0,0,0,0.25); color: #fff; text-align: center;">
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid var(--theme-panel-border); margin-top: 0.25rem;">
+              <span style="font-size: 0.8rem; color: var(--theme-text-muted);">Calculated Stride Length:</span>
+              <strong id="pedometer-calc-stride" style="font-size: 0.9rem; color: #00f2fe;">0.72 meters</strong>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Distance-to-Steps & Time-to-Steps Interactive Calculators -->
+      <div class="glass-panel" style="margin-bottom: 1.5rem; background: rgba(0,0,0,0.25); border: 1px solid var(--theme-panel-border); border-radius: 20px; padding: 1.5rem;">
+        <div class="panel-header" style="margin-bottom: 1rem;">
+          <h3 class="panel-title"><i class="fa-solid fa-calculator" style="color: #ffb703;"></i> <span data-i18n="pedometer-calc-section-title">Interactive Step Calculators</span></h3>
+          <span style="font-size: 0.8rem; color: var(--theme-text-muted);">Estimate step counts before heading out for a walk or run</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+          
+          <!-- Distance -> Steps Calculator -->
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--theme-panel-border); border-radius: 14px; padding: 1.25rem;">
+            <h4 style="font-size: 1rem; color: #FFF; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-map-location-dot" style="color: #00f2fe;"></i> Distance-to-Steps Estimator
+            </h4>
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.85rem;">
+              <input type="number" id="calc-dist-input" placeholder="Distance (e.g. 3.5)" step="0.1" style="flex: 1; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--theme-panel-border); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.85rem;">
+              <select id="calc-dist-unit" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--theme-panel-border); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.85rem;">
+                <option value="km">Kilometers (km)</option>
+                <option value="miles">Miles (mi)</option>
+              </select>
+            </div>
+            <button class="btn-action" id="btn-calc-dist-submit" style="width: 100%; background: #00f2fe; color: #000; font-weight: 700; padding: 0.55rem; border-radius: 8px; margin-bottom: 0.85rem;">
+              Calculate Steps Needed
+            </button>
+            <div id="calc-dist-result" style="background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.25); border-radius: 10px; padding: 0.85rem; font-size: 0.85rem; color: #FFF; display: none;">
+              <!-- Dynamic Output -->
+            </div>
+          </div>
+
+          <!-- Time -> Steps Calculator -->
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--theme-panel-border); border-radius: 14px; padding: 1.25rem;">
+            <h4 style="font-size: 1rem; color: #FFF; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-hourglass-half" style="color: #ffb703;"></i> Time-to-Steps Estimator
+            </h4>
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.85rem;">
+              <input type="number" id="calc-time-input" placeholder="Walking Duration in minutes (e.g. 45)" style="flex: 1; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--theme-panel-border); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.85rem;">
+              <select id="calc-pace-intensity" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--theme-panel-border); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.85rem;">
+                <option value="slow">Casual Stroll (80 steps/min)</option>
+                <option value="normal" selected>Normal Walk (100 steps/min)</option>
+                <option value="fast">Brisk Walk (120 steps/min)</option>
+                <option value="run">Jog / Run (150 steps/min)</option>
+              </select>
+            </div>
+            <button class="btn-action" id="btn-calc-time-submit" style="width: 100%; background: #ffb703; color: #000; font-weight: 700; padding: 0.55rem; border-radius: 8px; margin-bottom: 0.85rem;">
+              Calculate Steps & Distance
+            </button>
+            <div id="calc-time-result" style="background: rgba(255, 183, 3, 0.08); border: 1px solid rgba(255, 183, 3, 0.25); border-radius: 10px; padding: 0.85rem; font-size: 0.85rem; color: #FFF; display: none;">
+              <!-- Dynamic Output -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  <!-- DIALOG: AI MEAL SCANNER -->
+  <dialog id="scanner-dialog" style="max-width: 600px; width: 90%;">
+    <div class="dialog-header">
+      <h3 class="dialog-title"><i class="fa-solid fa-camera" style="color: var(--theme-primary);"></i> AI Meal Scanner</h3>
+      <button class="btn-icon" id="btn-close-scanner-dialog"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    
+    <!-- Gemini API Key configuration -->
+    <div style="margin-bottom: 1.25rem; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid var(--theme-panel-border); border-radius: 12px; font-size: 0.85rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <span style="font-weight: 600; color: var(--theme-text-main);"><i class="fa-solid fa-key" style="color: #ffb703;"></i> Gemini API Key (Optional)</span>
+        <a href="https://aistudio.google.com/" target="_blank" style="color: var(--theme-primary); text-decoration: none; font-size: 0.75rem;">Get Free Key <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+      </div>
+      <input type="password" id="scanner-gemini-key" placeholder="Enter your Gemini API key for real scans" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--theme-panel-border); background: rgba(0,0,0,0.2); color: #fff; font-size: 0.8rem; box-sizing: border-box;">
+    </div>
+    
+    <!-- Scanner Tabs -->
+    <div style="display: flex; background: rgba(0,0,0,0.2); border: 1px solid var(--theme-panel-border); padding: 0.25rem; border-radius: 100px; margin-bottom: 1.5rem;">
+      <button type="button" class="btn-toggle active" id="scanner-tab-upload" style="flex: 1; text-align: center; border-radius: 100px; padding: 0.5rem;">Upload Photo</button>
+      <button type="button" class="btn-toggle" id="scanner-tab-camera" style="flex: 1; text-align: center; border-radius: 100px; padding: 0.5rem;">Live Camera</button>
+    </div>
+
+    <!-- Upload View -->
+    <div id="scanner-view-upload" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--theme-panel-border); border-radius: 16px; padding: 2.5rem; cursor: pointer; position: relative; overflow: hidden; min-height: 240px; margin-bottom: 1.5rem; transition: var(--transition-smooth);">
+      <div id="scanner-upload-placeholder" style="text-align: center; color: var(--theme-text-muted);">
+        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 3rem; margin-bottom: 1rem; color: var(--theme-primary);"></i>
+        <p style="font-weight: 600; color: var(--theme-text-main);">Drag & Drop food photo here</p>
+        <p style="font-size: 0.8rem; margin-top: 0.25rem;">or click to browse local files</p>
+      </div>
+      <input type="file" id="scanner-file-input" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+      <input type="file" id="scanner-camera-input" accept="image/*" capture="environment" style="display: none;">
+      <img id="scanner-upload-preview" style="display: none; width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px;">
+      
+      <!-- Scanner animation line -->
+      <div class="scanner-laser" id="scanner-laser-line" style="display: none;"></div>
+    </div>
+
+    <!-- Camera View -->
+    <div id="scanner-view-camera" style="display: none; flex-direction: column; align-items: center; justify-content: center; position: relative; border-radius: 16px; overflow: hidden; background: #000; min-height: 240px; margin-bottom: 1.5rem;">
+      <video id="scanner-video" autoplay playsinline style="width: 100%; height: auto; max-height: 240px; object-fit: cover;"></video>
+      <canvas id="scanner-canvas" style="display: none; width: 100%; height: auto;"></canvas>
+      <div class="scanner-laser" id="scanner-camera-laser-line" style="display: none;"></div>
+      
+      <div style="position: absolute; bottom: 1rem; display: flex; gap: 0.5rem; z-index: 10;">
+        <button type="button" class="btn-action" id="btn-camera-capture" style="padding: 0.5rem 1rem; font-size: 0.85rem;"><i class="fa-solid fa-camera"></i> Capture Frame</button>
+        <button type="button" class="btn-secondary" id="btn-camera-retake" style="padding: 0.5rem 1rem; font-size: 0.85rem; display: none; background: rgba(0,0,0,0.6);"><i class="fa-solid fa-rotate-left"></i> Retake</button>
+      </div>
+    </div>
+
+    <!-- Results Panel -->
+    <div id="scanner-results-panel" style="display: none; background: rgba(255,255,255,0.02); border: 1px solid var(--theme-panel-border); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; animation: fadeIn 0.3s ease-out;">
+      <h4 style="font-family: var(--font-display); font-weight: 700; color: var(--theme-primary); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <i class="fa-solid fa-circle-check"></i> Analysis Complete
+      </h4>
+      <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1rem;">
+        <div>
+          <p style="font-size: 0.85rem; color: var(--theme-text-muted);">Detected Dish/Ingredients:</p>
+          <p style="font-size: 1.1rem; font-weight: 700; color: var(--theme-text-main);" id="scanner-detected-food">Chicken Breast, Eggs, Rice</p>
+        </div>
+        <div style="text-align: right;">
+          <p style="font-size: 0.85rem; color: var(--theme-text-muted);">Est. Energy Content:</p>
+          <p style="font-size: 1.3rem; font-weight: 800; color: var(--theme-secondary);" id="scanner-detected-calories">450 kcal</p>
+        </div>
+      </div>
+      
+      <div style="margin-top: 1rem; border-top: 1px solid var(--theme-panel-border); padding-top: 1rem;">
+        <p style="font-size: 0.8rem; text-transform: uppercase; color: var(--theme-text-muted); font-weight: 700; margin-bottom: 0.5rem;">Macro-Nutrient Density</p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; font-size: 0.85rem;">
+          <div style="background: rgba(255,255,255,0.02); padding: 0.5rem; border-radius: 8px; text-align: center;">
+            <p style="color: var(--theme-text-muted);">Protein</p>
+            <p style="font-weight: 700; color: #ffb703;" id="scanner-p">35g</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.02); padding: 0.5rem; border-radius: 8px; text-align: center;">
+            <p style="color: var(--theme-text-muted);">Carbs</p>
+            <p style="font-weight: 700; color: #0af0be;" id="scanner-c">28g</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.02); padding: 0.5rem; border-radius: 8px; text-align: center;">
+            <p style="color: var(--theme-text-muted);">Fats</p>
+            <p style="font-weight: 700; color: #f77f00;" id="scanner-f">8g</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Scanning status note -->
+      <p id="scanner-status-note" style="font-size: 0.75rem; color: var(--theme-text-muted); margin-top: 0.75rem; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.15); border-radius: 8px; border: 1px solid var(--theme-panel-border); display: none; line-height: 1.3;"></p>
+    </div>
+
+    <div class="dialog-actions">
+      <button type="button" class="btn-secondary" id="btn-scanner-cancel">Cancel</button>
+      <button type="button" class="btn-action" id="btn-scanner-submit" style="display: none;">Add to Daily Log</button>
+    </div>
+  </dialog>
+
+  <!-- DIALOG: HEALTHIFYME INTERACTIVE FOOD SEARCH & MEAL LOGGER -->
+  <dialog id="search-meal-dialog" style="max-width: 620px; width: 92%;">
+    <div class="dialog-header">
+      <div>
+        <h3 class="dialog-title" id="search-dialog-title"><i class="fa-solid fa-magnifying-glass" style="color: var(--theme-primary);"></i> Search & Log Food</h3>
+        <p style="font-size: 0.8rem; color: var(--theme-text-muted); margin-top: 0.2rem;" id="search-dialog-subtitle">Select meal and search from 150+ verified Indian & global dishes</p>
+      </div>
+      <button class="btn-icon" id="btn-close-search-dialog"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- Target Meal Selector -->
+    <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+      <button type="button" class="btn-toggle active btn-meal-select" data-meal="breakfast" style="flex: 1; text-align: center; padding: 0.4rem 0.6rem; font-size: 0.8rem; border-radius: 8px;">Breakfast</button>
+      <button type="button" class="btn-toggle btn-meal-select" data-meal="lunch" style="flex: 1; text-align: center; padding: 0.4rem 0.6rem; font-size: 0.8rem; border-radius: 8px;">Lunch</button>
+      <button type="button" class="btn-toggle btn-meal-select" data-meal="snack" style="flex: 1; text-align: center; padding: 0.4rem 0.6rem; font-size: 0.8rem; border-radius: 8px;">Snack</button>
+      <button type="button" class="btn-toggle btn-meal-select" data-meal="dinner" style="flex: 1; text-align: center; padding: 0.4rem 0.6rem; font-size: 0.8rem; border-radius: 8px;">Dinner</button>
+    </div>
+
+    <!-- Search Input Bar -->
+    <div style="position: relative; margin-bottom: 1rem;">
+      <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--theme-text-muted);"></i>
+      <input type="text" id="food-search-input" placeholder="Search dish e.g. Roti, Biryani, Dosa, Paneer, Egg, Dal..." style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.8rem; background: rgba(0,0,0,0.25); border: 1px solid var(--theme-panel-border); border-radius: 12px; color: var(--theme-text-main); font-size: 0.95rem; outline: none; box-sizing: border-box;">
+    </div>
+
+    <!-- Instant Search Results Dropdown List -->
+    <div id="food-search-results" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem;">
+      <p style="color: var(--theme-text-muted); font-size: 0.85rem; text-align: center; padding: 1rem 0;">Type food name above or select popular items below</p>
+    </div>
+
+    <!-- Selected Food Portion Configurator Panel -->
+    <div id="food-config-panel" style="display: none; background: rgba(255,255,255,0.03); border: 1px solid var(--theme-panel-border); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+        <div>
+          <h4 id="config-food-name" style="font-size: 1.15rem; font-weight: 700; color: var(--theme-text-main);">Roti / Chapati</h4>
+          <span id="config-food-category" class="badge" style="background: rgba(102,252,241,0.15); color: var(--theme-primary); font-size: 0.75rem;">Breads</span>
+        </div>
+        <div style="text-align: right;">
+          <span id="config-calc-calories" style="font-size: 1.3rem; font-weight: 800; color: var(--theme-secondary);">75 kcal</span>
+        </div>
+      </div>
+
+      <!-- Quantity Stepper & Unit Selector -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="font-size: 0.8rem; color: var(--theme-text-muted); font-weight: 600; display: block; margin-bottom: 0.3rem;">Quantity</label>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <button type="button" id="btn-qty-minus" class="btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 1rem; border-radius: 8px;">-</button>
+            <input type="number" id="config-qty-val" value="1" min="0.1" step="0.5" style="width: 100%; text-align: center; padding: 0.4rem; background: rgba(0,0,0,0.3); border: 1px solid var(--theme-panel-border); border-radius: 8px; color: #fff; font-weight: 700;">
+            <button type="button" id="btn-qty-plus" class="btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 1rem; border-radius: 8px;">+</button>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; color: var(--theme-text-muted); font-weight: 600; display: block; margin-bottom: 0.3rem;">Serving Portion / Unit</label>
+          <select id="config-unit-select" style="width: 100%; padding: 0.45rem; background: rgba(0,0,0,0.3); border: 1px solid var(--theme-panel-border); border-radius: 8px; color: #fff; font-size: 0.85rem; outline: none;">
+            <option value="item">Roti / Piece</option>
+            <option value="bowl">Bowl (150g)</option>
+            <option value="cup">Cup (150g)</option>
+            <option value="plate">Plate (350g)</option>
+            <option value="100g">100g</option>
+            <option value="g">Gram (g)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Live Calculated Macro Badges -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 12px; text-align: center;">
+        <div>
+          <span style="font-size: 0.7rem; color: var(--theme-text-muted); display: block;">Protein</span>
+          <span id="config-calc-p" style="font-weight: 700; color: #ffb703; font-size: 0.95rem;">3g</span>
+        </div>
+        <div>
+          <span style="font-size: 0.7rem; color: var(--theme-text-muted); display: block;">Carbs</span>
+          <span id="config-calc-c" style="font-weight: 700; color: #0af0be; font-size: 0.95rem;">15g</span>
+        </div>
+        <div>
+          <span style="font-size: 0.7rem; color: var(--theme-text-muted); display: block;">Fats</span>
+          <span id="config-calc-f" style="font-weight: 700; color: #f77f00; font-size: 0.95rem;">0.8g</span>
+        </div>
+        <div>
+          <span style="font-size: 0.7rem; color: var(--theme-text-muted); display: block;">Fiber</span>
+          <span id="config-calc-fib" style="font-weight: 700; color: var(--theme-primary); font-size: 0.95rem;">2.5g</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Free Text Quick NLP Input Option -->
+    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--theme-panel-border); border-radius: 12px; padding: 0.75rem; margin-bottom: 1.25rem;">
+      <label style="font-size: 0.75rem; color: var(--theme-text-muted); font-weight: 600; display: block; margin-bottom: 0.4rem;">Or type free-form meal text (e.g. "2 idli with 1 bowl sambar")</label>
+      <div style="display: flex; gap: 0.5rem;">
+        <input type="text" id="search-nlp-free-text" placeholder="e.g. 2 roti + 1 bowl dal + 100g curd" style="flex: 1; padding: 0.45rem 0.75rem; background: rgba(0,0,0,0.2); border: 1px solid var(--theme-panel-border); border-radius: 8px; color: #fff; font-size: 0.85rem; outline: none;">
+        <button type="button" id="btn-parse-search-nlp" class="btn-action" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; background: var(--theme-primary); color: #000;">Add via NLP</button>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button type="button" class="btn-secondary" id="btn-cancel-search">Close</button>
+      <button type="button" class="btn-action" id="btn-confirm-add-food" style="display: none; background: var(--theme-primary); color: #000;">Add to Meal</button>
+    </div>
+  </dialog>
+
+  <!-- DIALOG: LOG ENTRY MODAL -->
+  <dialog id="log-dialog">
+    <div class="dialog-header">
+      <h3 class="dialog-title">Quick Log Calorie & Workout</h3>
+      <button class="btn-icon" id="btn-close-log-dialog"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="dialog-log-form">
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 12px; border: 1px solid var(--theme-panel-border);">
+          <label style="font-family: var(--font-display); font-size: 0.85rem; color: var(--theme-text-muted); font-weight: 600; display: block; margin-bottom: 0.5rem;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--theme-primary);"></i> Smart AI Parse (Quantity + Food)</label>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="dialog-nlp-input" placeholder="e.g. 2 eggs, 100g oats, 1 banana" style="flex-grow: 1; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--theme-panel-border); padding: 0.5rem 0.75rem; border-radius: 8px; color: var(--theme-text-main); font-size: 0.85rem; outline: none;">
+            <button type="button" class="btn-action" id="btn-dialog-parse-nlp" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: var(--theme-primary); color: #000;">Parse</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Calories Consumed (kcal)</label>
+          <input type="number" id="log-calories" placeholder="e.g. 2600" required>
+        </div>
+        <div class="form-row-3col">
+          <div class="form-group">
+            <label>Protein (g)</label>
+            <input type="number" id="log-protein" required>
+          </div>
+          <div class="form-group">
+            <label>Carbs (g)</label>
+            <input type="number" id="log-carbs" required>
+          </div>
+          <div class="form-group">
+            <label>Fats (g)</label>
+            <input type="number" id="log-fats" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Water Intake (ml)</label>
+          <input type="number" id="log-water" required>
+        </div>
+        <div class="form-group">
+          <label>Workout Duration (mins)</label>
+          <input type="number" id="log-duration" value="0">
+        </div>
+        <div class="form-group">
+          <label>Workout Style</label>
+          <select id="log-workout-style">
+            <option value="">None / Rest Day</option>
+            <option value="VO2max">VO2max Cardiovascular</option>
+            <option value="HIIT">HIIT (Intervals)</option>
+            <option value="Strength">Strength & Power</option>
+            <option value="Metabolism Circuit">Metabolism Circuit</option>
+            <option value="Machine Focus">Machine Isolation</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Morning Weight (kg)</label>
+          <input type="number" step="0.1" id="log-weight">
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="log-workout-completed">
+          <label for="log-workout-completed">Workout Completed</label>
+        </div>
+        <div class="form-group">
+          <label>Daily Notes</label>
+          <textarea id="log-notes" rows="2"></textarea>
+        </div>
+        <div class="dialog-actions">
+          <button type="button" class="btn-secondary" id="btn-cancel-log">Cancel</button>
+          <button type="submit" class="btn-action">Save Log</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- DIALOG: VIDEO PLAYER -->
+  <dialog id="video-dialog" class="video-dialog">
+    <div class="dialog-header">
+      <h3 class="dialog-title" id="video-dialog-title">Exercise Reference Video</h3>
+      <button class="btn-icon" id="btn-close-video-dialog"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="video-container">
+      <iframe id="video-frame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="video-language-toggle" style="display: flex; gap: 0.5rem; margin-top: 0.75rem; justify-content: center; margin-bottom: 0.5rem;">
+      <button class="btn-secondary" id="modal-lang-en" data-lang="en" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; border-radius: 6px; cursor: pointer; transition: all 0.2s;">English Guide</button>
+      <button class="btn-secondary" id="modal-lang-ta" data-lang="ta" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Tamil Guide / தமிழ்</button>
+      <button class="btn-secondary" id="modal-lang-tg" data-lang="tg" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Tanglish Guide</button>
+    </div>
+    <p style="color: var(--theme-text-muted); font-size: 0.9rem;" id="video-dialog-instruction"></p>
+    <div class="dialog-actions" style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 1rem;">
+      <a id="btn-watch-youtube" href="#" target="_blank" class="btn-secondary" style="display: inline-flex; align-items: center; gap: 0.4rem; color: #ff3333; border-color: #ff3333; text-decoration: none;">
+        <i class="fa-brands fa-youtube"></i> Watch on YouTube
+      </a>
+      <button class="btn-secondary" id="btn-close-video">Close Video</button>
+    </div>
+  </dialog>
+
+  <!-- DIALOG: USER AUTHENTICATION (LOGIN / REGISTER) -->
+  <dialog id="auth-dialog" class="glass-dialog">
+    <div class="dialog-content" style="max-width: 440px; width: 95%;">
+      <div class="dialog-header">
+        <h3 class="dialog-title" id="auth-modal-title" style="display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fa-solid fa-lock" style="color: var(--theme-primary);"></i> User Authentication
+        </h3>
+        <button class="btn-icon" id="btn-close-auth-dialog"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <p style="color: var(--theme-text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+        Please sign in or create an account to manage physical details & receive scientific calorie recommendations.
+      </p>
+
+      <!-- Auth Tab Switches -->
+      <div class="auth-tabs" style="display: flex; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--theme-panel-border); padding-bottom: 0.5rem;">
+        <button type="button" class="btn-secondary active-auth-tab" id="tab-btn-login" style="flex: 1; padding: 0.5rem; border-radius: 8px; font-weight: 600; background: rgba(var(--theme-primary-rgb), 0.2); color: var(--theme-primary); border-color: var(--theme-primary);">Sign In</button>
+        <button type="button" class="btn-secondary" id="tab-btn-register" style="flex: 1; padding: 0.5rem; border-radius: 8px; font-weight: 600;">Create Account</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="auth-login-form">
+        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+          <div class="form-group">
+            <label for="auth-login-email">Email Address</label>
+            <input type="email" id="auth-login-email" placeholder="name@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="auth-login-password">Password</label>
+            <input type="password" id="auth-login-password" placeholder="••••••••" required>
+          </div>
+          <div id="auth-login-error" style="color: #ef4444; font-size: 0.85rem; display: none;"></div>
+          <button type="submit" class="btn-action" style="width: 100%; margin-top: 0.5rem;">
+            <i class="fa-solid fa-right-to-bracket"></i> Sign In to Access
+          </button>
+          
+          <div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: var(--theme-text-muted);">
+            <span>Quick Demo?</span> 
+            <button type="button" id="btn-quick-demo-login" style="background: none; border: none; color: var(--theme-primary); font-weight: 700; cursor: pointer; text-decoration: underline;">
+              Sign In with Demo Account
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Register Form -->
+      <form id="auth-register-form" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+          <div class="form-group">
+            <label for="auth-reg-name">Full Name</label>
+            <input type="text" id="auth-reg-name" placeholder="Haridoss Loganathan" required>
+          </div>
+          <div class="form-group">
+            <label for="auth-reg-email">Email Address</label>
+            <input type="email" id="auth-reg-email" placeholder="name@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="auth-reg-password">Create Password</label>
+            <input type="password" id="auth-reg-password" placeholder="••••••••" required minlength="4">
+          </div>
+          <div id="auth-reg-error" style="color: #ef4444; font-size: 0.85rem; display: none;"></div>
+          <button type="submit" class="btn-action" style="width: 100%; margin-top: 0.5rem;">
+            <i class="fa-solid fa-user-plus"></i> Register & Get Recommendation
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- DIALOG: USER PROFILE SETTINGS & CALORIE CALCULATOR -->
+  <dialog id="profile-dialog" class="glass-dialog" style="max-width: 580px; width: 95%;">
+    <div class="dialog-header">
+      <h3 class="dialog-title" style="display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-calculator" style="color: var(--theme-primary);"></i> Physical Details & Calorie Calculator
+      </h3>
+      <button class="btn-icon" id="btn-close-profile-dialog"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- Login Gated Lock Overlay Notice (if not logged in) -->
+    <div id="auth-lock-overlay" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; text-align: center;">
+      <i class="fa-solid fa-lock" style="font-size: 1.5rem; color: #ef4444; margin-bottom: 0.5rem;"></i>
+      <h4 style="color: #ef4444; font-weight: 700; margin-bottom: 0.25rem;">Login Required to Input Physical Details</h4>
+      <p style="color: var(--theme-text-muted); font-size: 0.85rem; margin-bottom: 0.75rem;">You must sign in to save physical metrics, compute BMR/TDEE, and generate personalized calorie recommendations.</p>
+      <button type="button" class="btn-action" id="btn-trigger-login-from-overlay" style="background: #ef4444; color: #fff; padding: 0.4rem 1rem; font-size: 0.85rem;">
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In / Register Now
+      </button>
+    </div>
+
+    <form id="profile-settings-form">
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="form-group">
+          <label for="profile-username">Practitioner / Athlete Name</label>
+          <input type="text" id="profile-username" required>
+        </div>
+
+        <div class="form-row-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label for="profile-age">Age (Years)</label>
+            <input type="number" id="profile-age" min="10" max="100" value="28" required>
+          </div>
+          <div class="form-group">
+            <label for="profile-gender">Gender</label>
+            <select id="profile-gender">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-3col">
+          <div class="form-group">
+            <label for="profile-weight">Current Wt (kg)</label>
+            <input type="number" step="0.1" id="profile-weight" required>
+          </div>
+          <div class="form-group">
+            <label for="profile-target-weight">Target Wt (kg)</label>
+            <input type="number" step="0.1" id="profile-target-weight" required>
+          </div>
+          <div class="form-group">
+            <label for="profile-height">Height (cm)</label>
+            <input type="number" step="1" id="profile-height" required>
+          </div>
+        </div>
+
+        <div class="form-row-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label for="profile-activity">Activity Level</label>
+            <select id="profile-activity">
+              <option value="sedentary">Sedentary (Little/no exercise)</option>
+              <option value="light">Lightly Active (1-3 days/wk)</option>
+              <option value="moderate" selected>Moderately Active (3-5 days/wk)</option>
+              <option value="very_active">Very Active (6-7 days/wk)</option>
+              <option value="extra_active">Extra Active (Athlete/Physical Job)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="profile-goal">Fitness Goal</label>
+            <select id="profile-goal">
+              <option value="aggressive_loss">Aggressive Fat Loss (-750 kcal)</option>
+              <option value="fat_loss" selected>Fat Loss / Cutting (-500 kcal)</option>
+              <option value="maintenance">Weight Maintenance (TDEE)</option>
+              <option value="lean_gain">Lean Muscle Gain (+300 kcal)</option>
+              <option value="muscle_surplus">Bulk / Muscle Surplus (+500 kcal)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="profile-experience">Experience Level</label>
+          <select id="profile-experience">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="expert">Expert</option>
+            <option value="custom">Custom (4-Week Plan)</option>
+          </select>
+        </div>
+
+        <!-- Scientific Calorie Recommendation Panel -->
+        <div id="settings-recommendations-panel" style="background: rgba(var(--theme-primary-rgb), 0.06); border: 1px solid rgba(var(--theme-primary-rgb), 0.2); border-radius: 16px; padding: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <h4 style="font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; color: var(--theme-primary); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Mifflin-St Jeor Calorie Recommendation
+            </h4>
+            <button type="button" class="btn-secondary" id="btn-calculate-recommendation" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 8px;">
+              <i class="fa-solid fa-calculator"></i> Calculate
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.85rem; margin-bottom: 0.75rem;">
+            <div>
+              <p style="color: var(--theme-text-muted);">Basal Metabolic Rate (BMR):</p>
+              <p style="font-weight: 700; color: var(--theme-text-main);" id="rec-bmr">1,715 kcal/day</p>
+            </div>
+            <div>
+              <p style="color: var(--theme-text-muted);">Total Expenditure (TDEE):</p>
+              <p style="font-weight: 700; color: var(--theme-text-main);" id="rec-tdee">2,658 kcal/day</p>
+            </div>
+            <div>
+              <p style="color: var(--theme-text-muted);">Target Calorie Intake:</p>
+              <p style="font-weight: 700; color: var(--theme-primary); font-size: 1.05rem;" id="rec-calories">2,158 kcal/day</p>
+            </div>
+            <div>
+              <p style="color: var(--theme-text-muted);">Recommended Hydration:</p>
+              <p style="font-weight: 700; color: var(--theme-text-main);" id="rec-water">2.7L (2,700 ml)</p>
+            </div>
+            <div style="grid-column: span 2;">
+              <p style="color: var(--theme-text-muted); margin-bottom: 0.25rem;">Target Macro Distribution:</p>
+              <p style="font-weight: 700; color: var(--theme-text-main);" id="rec-macros">Protein: 153g | Carbs: 243g | Fats: 60g</p>
+            </div>
+          </div>
+
+          <button type="button" class="btn-secondary" id="btn-apply-recommendations" style="width: 100%; padding: 0.5rem; font-size: 0.8rem; background: rgba(var(--theme-primary-rgb), 0.15); color: var(--theme-primary); border-color: rgba(var(--theme-primary-rgb), 0.3); border-style: solid; border-width: 1px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: var(--transition-smooth); font-weight: 600;">
+            <i class="fa-solid fa-check"></i> Apply Calorie & Macro Targets Below
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label for="profile-calories">Daily Calorie Target (kcal)</label>
+          <input type="number" id="profile-calories" required>
+        </div>
+        <div class="form-row-3col">
+          <div class="form-group">
+            <label for="profile-protein">Protein (g)</label>
+            <input type="number" id="profile-protein" required>
+          </div>
+          <div class="form-group">
+            <label for="profile-carbs">Carbs (g)</label>
+            <input type="number" id="profile-carbs" required>
+          </div>
+          <div class="form-group">
+            <label for="profile-fats">Fats (g)</label>
+            <input type="number" id="profile-fats" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="profile-water">Water Intake Target (ml)</label>
+          <input type="number" id="profile-water" required>
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" class="btn-secondary" id="btn-cancel-profile">Cancel</button>
+          <button type="submit" class="btn-action" id="btn-save-profile">Save Physical Details</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- HealthifyMe Nutrient Source Breakdown Modal -->
+  <dialog id="nutrient-breakdown-dialog" class="glass-dialog" style="max-width: 650px; width: 95%;">
+    <div class="dialog-content" style="max-height: 85vh; overflow-y: auto;">
+      <div class="dialog-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--theme-panel-border); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+        <div>
+          <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--theme-text-main); display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-list-check" style="color: var(--theme-primary);"></i> HealthifyMe Nutrient Source Breakdown
+          </h3>
+          <p style="color: var(--theme-text-muted); font-size: 0.8rem; margin-top: 0.25rem;">Detailed breakdown of food items contributing to today's macros & micros.</p>
+        </div>
+        <button type="button" class="btn-icon" id="btn-close-nutrient-dialog" style="color: var(--theme-text-muted); font-size: 1.2rem; background: none; border: none; cursor: pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="nutrient-breakdown-content" style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Dynamic content filled by JS -->
+      </div>
+
+      <div style="margin-top: 1.25rem; text-align: right; border-top: 1px solid var(--theme-panel-border); padding-top: 0.75rem;">
+        <button type="button" class="btn-secondary" id="btn-done-nutrient-dialog">Close Breakdown</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Mobile Bottom Tab Bar (Visible only on mobile) -->
+  <nav class="bottom-tab-bar">
+    <div class="nav-item active" data-tab="tab-dashboard">
+      <a href="#"><i class="fa-solid fa-chart-line"></i><span>Home</span></a>
+    </div>
+    <div class="nav-item" data-tab="tab-ideal-weight">
+      <a href="#"><i class="fa-solid fa-bullseye"></i><span>Ideal Weight</span></a>
+    </div>
+    <div class="nav-item" data-tab="tab-workouts">
+      <a href="#"><i class="fa-solid fa-dumbbell"></i><span>Workout</span></a>
+    </div>
+    <div class="nav-item" data-tab="tab-tracker">
+      <a href="#"><i class="fa-solid fa-calendar-days"></i><span>Tracker</span></a>
+    </div>
+    <div class="nav-item" data-tab="tab-pedometer">
+      <a href="#"><i class="fa-solid fa-shoe-prints"></i><span>Steps</span></a>
+    </div>
+    <div class="nav-item" data-tab="tab-diet">
+      <a href="#"><i class="fa-solid fa-apple-whole"></i><span>Diet</span></a>
+    </div>
+    <div class="nav-item" data-tab="tab-recovery">
+      <a href="#"><i class="fa-solid fa-kit-medical"></i><span>Recovery</span></a>
+    </div>
+  </nav>
+
+  <!-- Client Application Scripts -->
+  <script src="/js/data.js?v=17"></script>
+  <script src="/js/translations.js?v=17"></script>
+  <script src="/js/muscleMap.js?v=17"></script>
+  <script src="/js/foodParser.js?v=17"></script>
+  <script src="/js/tracker.js?v=17"></script>
+  <script src="/js/pedometer.js?v=17"></script>
+  <script src="/js/capacitor-sqlite-bridge.js?v=17"></script>
+  <script src="/js/app.js?v=17"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js?v=17')
+        .then(reg => {
+          console.log('Service Worker Registered');
+          if (reg) reg.update();
+        })
+        .catch(err => console.error('Service Worker Registry Failed', err));
+    }
+  </script>
+</body>
+</html>
