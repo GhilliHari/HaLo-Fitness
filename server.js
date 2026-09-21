@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { query, run, get, initDatabase } from './db.js';
+import { query, run, get, initDatabase, dbPath } from './db.js';
 import { backupDatabaseToGCS, uploadMealPhotoToGCS, syncUserLogsToGCS } from './gcs-manager.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -391,7 +391,6 @@ app.post('/api/tracker/log', async (req, res) => {
 // Google Cloud Storage Sync Endpoints
 app.post('/api/gcs/backup', async (req, res) => {
   try {
-    const dbPath = join(__dirname, 'database.db');
     const result = await backupDatabaseToGCS(dbPath);
     res.json({ status: 'success', message: 'SQLite database backed up to Google Cloud Storage', path: result });
   } catch (err) {

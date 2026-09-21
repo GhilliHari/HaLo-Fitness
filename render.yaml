@@ -10,7 +10,8 @@ services:
         value: production
       - key: PORT
         value: 10000
-    disk:
-      name: halo-data
-      mountPath: /app/data
-      sizeGB: 1
+    # Note: To enable persistent disks on Render, change plan to 'starter' and uncomment the disk section below:
+    # disk:
+    #   name: halo-data
+    #   mountPath: /app/data
+    #   sizeGB: 1

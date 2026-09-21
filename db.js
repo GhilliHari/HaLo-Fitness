@@ -4,7 +4,15 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const dbPath = join(__dirname, 'database.db');
+const dataDir = process.env.DATA_DIR || (fs.existsSync('/app/data') ? '/app/data' : __dirname);
+if (!fs.existsSync(dataDir)) {
+  try {
+    fs.mkdirSync(dataDir, { recursive: true });
+  } catch (e) {
+    console.warn('Could not create dataDir:', e.message);
+  }
+}
+export const dbPath = process.env.DATABASE_PATH || join(dataDir, 'database.db');
 
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
