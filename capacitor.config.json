@@ -2,5 +2,9 @@
   "appId": "com.halofitness.app",
   "appName": "HaLo Fitness",
   "webDir": "public",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://halo-fitness.onrender.com",
+    "cleartext": false
+  }
 }
