@@ -64,13 +64,10 @@
     <div class="sidebar-profile">
       <div class="level" id="profile-level-badge">Intermediate</div>
       <div class="name" id="profile-name-badge">Eco Warrior</div>
-      <div style="display: flex; gap: 6px; margin-top: 8px;">
-        <button class="btn-secondary" style="padding: 0.4rem 0.6rem; font-size: 0.75rem;" id="btn-open-profile-dialog">
-          <i class="fa-solid fa-gear"></i> <span data-i18n="sidebar-settings">Settings</span>
+      <div style="margin-top: 8px;">
+        <button class="btn-secondary" style="padding: 0.45rem 0.8rem; font-size: 0.78rem; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;" id="btn-open-profile-dialog">
+          <i class="fa-solid fa-gear"></i> <span data-i18n="sidebar-settings">Profile & Settings</span>
         </button>
-        <a href="/HaLo-Fitness.apk" download="HaLo-Fitness.apk" class="btn-primary" style="padding: 0.4rem 0.6rem; font-size: 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #22c55e; color: #fff; border-radius: 6px; font-weight: 600;">
-          <i class="fa-brands fa-android"></i> <span>Download APK</span>
-        </a>
       </div>
     </div>
   </aside>
@@ -85,10 +82,6 @@
 
       <!-- Controls Container on the Right -->
       <div class="header-controls">
-        <a href="/HaLo-Fitness.apk" download="HaLo-Fitness.apk" class="btn-action" id="btn-download-apk" style="background: linear-gradient(135deg, #00f2fe, #4facfe); color: #000; font-weight: 700; border: none; padding: 0.45rem 0.85rem; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 0.4rem; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3);">
-          <i class="fa-brands fa-android" style="font-size: 1.1rem;"></i> <span>Download Android App (.APK)</span>
-        </a>
-
         <button type="button" class="btn-action" id="btn-header-calc-shortcut" style="background: rgba(var(--theme-primary-rgb), 0.15); color: var(--theme-primary); border: 1px solid rgba(var(--theme-primary-rgb), 0.3); border-radius: 8px; font-weight: 600; padding: 0.45rem 0.8rem; font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">
           <i class="fa-solid fa-calculator"></i> <span>Calorie Calculator</span>
         </button>
@@ -2005,18 +1998,18 @@
   </nav>
 
   <!-- Client Application Scripts -->
-  <script src="/js/data.js?v=19"></script>
-  <script src="/js/translations.js?v=19"></script>
-  <script src="/js/muscleMap.js?v=19"></script>
-  <script src="/js/foodParser.js?v=19"></script>
-  <script src="/js/tracker.js?v=19"></script>
-  <script src="/js/pedometer.js?v=19"></script>
-  <script src="/js/connectedServices.js?v=19"></script>
-  <script src="/js/capacitor-sqlite-bridge.js?v=19"></script>
-  <script src="/js/app.js?v=19"></script>
+  <script src="/js/data.js?v=20"></script>
+  <script src="/js/translations.js?v=20"></script>
+  <script src="/js/muscleMap.js?v=20"></script>
+  <script src="/js/foodParser.js?v=20"></script>
+  <script src="/js/tracker.js?v=20"></script>
+  <script src="/js/pedometer.js?v=20"></script>
+  <script src="/js/connectedServices.js?v=20"></script>
+  <script src="/js/capacitor-sqlite-bridge.js?v=20"></script>
+  <script src="/js/app.js?v=20"></script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js?v=19')
+      navigator.serviceWorker.register('/sw.js?v=20')
         .then(reg => {
           console.log('Service Worker Registered');
           if (reg) reg.update();

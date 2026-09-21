@@ -1,16 +1,16 @@
-const CACHE_NAME = 'halo-fitness-v19';
+const CACHE_NAME = 'halo-fitness-v20';
 const ASSETS = [
   '/',
   '/index.html',
   '/css/style.css',
-  '/js/app.js?v=19',
-  '/js/data.js?v=19',
-  '/js/translations.js?v=19',
-  '/js/muscleMap.js?v=19',
-  '/js/foodParser.js?v=19',
-  '/js/tracker.js?v=19',
-  '/js/pedometer.js?v=19',
-  '/js/connectedServices.js?v=19'
+  '/js/app.js?v=20',
+  '/js/data.js?v=20',
+  '/js/translations.js?v=20',
+  '/js/muscleMap.js?v=20',
+  '/js/foodParser.js?v=20',
+  '/js/tracker.js?v=20',
+  '/js/pedometer.js?v=20',
+  '/js/connectedServices.js?v=20'
 ];
 
 self.addEventListener('install', e => {
