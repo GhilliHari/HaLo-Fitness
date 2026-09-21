@@ -4,7 +4,7 @@
   "webDir": "public",
   "bundledWebRuntime": false,
   "server": {
-    "url": "https://halo-fitness.onrender.com",
+    "url": "https://halo-fitness-af9f.onrender.com",
     "cleartext": false
   }
 }
