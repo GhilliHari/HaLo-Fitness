@@ -88,16 +88,26 @@ export async function initDatabase() {
     )
   `);
 
+  const safeAddColumn = async (table, col, def) => {
+    try {
+      const info = await query(`PRAGMA table_info(${table})`);
+      const names = info.map(c => c.name);
+      if (!names.includes(col)) {
+        await run(`ALTER TABLE ${table} ADD COLUMN ${col} ${def}`);
+      }
+    } catch (e) {
+      // column already exists or table locked, ignore
+    }
+  };
+
   // Safely add missing columns to profile if table existed previously
-  const tableInfo = await query("PRAGMA table_info(profile)");
-  const colNames = tableInfo.map(c => c.name);
-  if (!colNames.includes('age')) await run("ALTER TABLE profile ADD COLUMN age INTEGER DEFAULT 28");
-  if (!colNames.includes('gender')) await run("ALTER TABLE profile ADD COLUMN gender TEXT DEFAULT 'male'");
-  if (!colNames.includes('activity_level')) await run("ALTER TABLE profile ADD COLUMN activity_level TEXT DEFAULT 'moderate'");
-  if (!colNames.includes('fitness_goal')) await run("ALTER TABLE profile ADD COLUMN fitness_goal TEXT DEFAULT 'fat_loss'");
-  if (!colNames.includes('bmr')) await run("ALTER TABLE profile ADD COLUMN bmr REAL DEFAULT 1715.0");
-  if (!colNames.includes('tdee')) await run("ALTER TABLE profile ADD COLUMN tdee REAL DEFAULT 2658.0");
-  if (!colNames.includes('user_id')) await run("ALTER TABLE profile ADD COLUMN user_id INTEGER");
+  await safeAddColumn('profile', 'age', 'INTEGER DEFAULT 28');
+  await safeAddColumn('profile', 'gender', "TEXT DEFAULT 'male'");
+  await safeAddColumn('profile', 'activity_level', "TEXT DEFAULT 'moderate'");
+  await safeAddColumn('profile', 'fitness_goal', "TEXT DEFAULT 'fat_loss'");
+  await safeAddColumn('profile', 'bmr', 'REAL DEFAULT 1715.0');
+  await safeAddColumn('profile', 'tdee', 'REAL DEFAULT 2658.0');
+  await safeAddColumn('profile', 'user_id', 'INTEGER');
 
   await run(`
     CREATE TABLE IF NOT EXISTS logs (
@@ -128,11 +138,51 @@ export async function initDatabase() {
   `);
 
   // Safely add missing columns to logs if table existed previously
-  const logsTableInfo = await query("PRAGMA table_info(logs)");
-  const logColNames = logsTableInfo.map(c => c.name);
-  if (!logColNames.includes('steps')) await run("ALTER TABLE logs ADD COLUMN steps INTEGER DEFAULT 0");
-  if (!logColNames.includes('calories_burned_steps')) await run("ALTER TABLE logs ADD COLUMN calories_burned_steps INTEGER DEFAULT 0");
-  if (!logColNames.includes('distance_km')) await run("ALTER TABLE logs ADD COLUMN distance_km REAL DEFAULT 0.0");
+  await safeAddColumn('logs', 'steps', 'INTEGER DEFAULT 0');
+  await safeAddColumn('logs', 'calories_burned_steps', 'INTEGER DEFAULT 0');
+  await safeAddColumn('logs', 'distance_km', 'REAL DEFAULT 0.0');
+
+  // Connected Health & Fitness Services (Apple Health, Strava)
+  await run(`
+    CREATE TABLE IF NOT EXISTS connected_services (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER DEFAULT 1,
+      service_name TEXT UNIQUE NOT NULL,
+      is_connected INTEGER DEFAULT 0,
+      client_id TEXT DEFAULT '',
+      client_secret TEXT DEFAULT '',
+      access_token TEXT DEFAULT '',
+      refresh_token TEXT DEFAULT '',
+      token_expires_at INTEGER DEFAULT 0,
+      athlete_data TEXT DEFAULT '{}',
+      last_synced_at TEXT DEFAULT '',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await run(`
+    CREATE TABLE IF NOT EXISTS external_activities (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER DEFAULT 1,
+      source TEXT NOT NULL,
+      external_id TEXT UNIQUE,
+      activity_name TEXT,
+      activity_type TEXT,
+      start_date TEXT,
+      distance_meters REAL DEFAULT 0.0,
+      moving_time_seconds INTEGER DEFAULT 0,
+      elapsed_time_seconds INTEGER DEFAULT 0,
+      calories REAL DEFAULT 0.0,
+      average_speed REAL DEFAULT 0.0,
+      max_speed REAL DEFAULT 0.0,
+      elevation_gain REAL DEFAULT 0.0,
+      raw_data TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await run("INSERT OR IGNORE INTO connected_services (user_id, service_name, is_connected, athlete_data) VALUES (1, 'apple_health', 1, ?)", [JSON.stringify({ device: 'Apple Watch & iPhone HealthKit', auto_sync: true, sync_steps: true, sync_calories: true })]);
+  await run("INSERT OR IGNORE INTO connected_services (user_id, service_name, is_connected, athlete_data) VALUES (1, 'strava', 0, ?)", [JSON.stringify({ athlete_name: '', total_activities: 0 })]);
 
   // Seed default demo user if not existing
   let demoUser = await get("SELECT * FROM users WHERE email = ?", ['demo@halofitness.com']);

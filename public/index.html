@@ -52,6 +52,9 @@
       <li class="nav-item" data-tab="tab-ideal-weight">
         <a href="#"><i class="fa-solid fa-bullseye"></i> <span>Ideal Weight & Deficit</span></a>
       </li>
+      <li class="nav-item" data-tab="tab-connected-devices">
+        <a href="#"><i class="fa-solid fa-link"></i> <span>Apple & Strava</span></a>
+      </li>
       <li class="nav-item" data-tab="tab-philosophy">
         <a href="#"><i class="fa-solid fa-seedling"></i> <span data-i18n="nav-philosophy">Our Philosophy</span></a>
       </li>
@@ -194,6 +197,34 @@
                 <circle id="pedometer-dash-ring" cx="50" cy="50" r="42" stroke="#00f2fe" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="263.89" stroke-dashoffset="263.89" transform="rotate(-90 50 50)" style="transition: stroke-dashoffset 0.5s ease;"></circle>
               </svg>
               <div style="font-size: 0.7rem; font-weight: 700; color: #00f2fe; margin-top: 2px;" id="pedometer-dash-pct">0%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Connected Wearables Widget (Apple Health & Strava) -->
+        <div class="glass-panel col-4 col-md-12" id="dashboard-connected-devices-widget" style="cursor: pointer; background: linear-gradient(135deg, rgba(252, 76, 2, 0.08), rgba(76, 217, 100, 0.05)); border: 1px solid rgba(255, 255, 255, 0.12);">
+          <div class="panel-header" style="align-items: center;">
+            <h3 class="panel-title"><i class="fa-solid fa-link" style="color: #FC4C02;"></i> <span>Connected Apps</span></h3>
+            <span class="badge" style="background: rgba(252, 76, 2, 0.15); color: #FC4C02; border: 1px solid rgba(252,76,2,0.3); font-size: 0.7rem;">Apple & Strava</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-top: 0.5rem;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--theme-panel-border); border-radius: 12px; padding: 0.65rem 0.75rem; display: flex; align-items: center; gap: 0.6rem;">
+              <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(76, 217, 100, 0.15); color: #4cd964; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+                <i class="fa-brands fa-apple"></i>
+              </div>
+              <div style="min-width: 0;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: #FFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Apple Health</div>
+                <div id="dash-apple-health-badge" style="font-size: 0.68rem; color: #4cd964; margin-top: 2px;">Apple Watch Ready</div>
+              </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--theme-panel-border); border-radius: 12px; padding: 0.65rem 0.75rem; display: flex; align-items: center; gap: 0.6rem;">
+              <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(252, 76, 2, 0.15); color: #FC4C02; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+                <i class="fa-brands fa-strava"></i>
+              </div>
+              <div style="min-width: 0;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: #FFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Strava GPS</div>
+                <div id="dash-strava-badge" style="font-size: 0.68rem; color: #FC4C02; margin-top: 2px;">Sync Workouts</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1246,6 +1277,164 @@
         </div>
       </div>
     </section>
+
+    <!-- TAB: CONNECTED WEARABLES & APPS (APPLE HEALTH & STRAVA) -->
+    <section id="tab-connected-devices" class="tab-content">
+      <div class="glass-panel" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(252, 76, 2, 0.12), rgba(76, 217, 100, 0.08)); border: 1px solid rgba(252, 76, 2, 0.3); border-radius: 20px; padding: 1.5rem;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+          <div>
+            <h2 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: #FFF; display: flex; align-items: center; gap: 0.6rem;">
+              <i class="fa-solid fa-link" style="color: #FC4C02;"></i> <span>Connected Wearables & Workouts</span>
+            </h2>
+            <p style="color: var(--theme-text-muted); font-size: 0.9rem; margin-top: 0.3rem;">
+              Sync steps, heart rate, and active calories from Apple Watch (Apple Health) and GPS outdoor runs/rides from Strava.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn-secondary" onclick="window.ConnectedServices.fetchStatus()" style="padding: 0.65rem 1rem; border-radius: 12px; font-size: 0.85rem;">
+              <i class="fa-solid fa-rotate"></i> Refresh Status
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- 1. Apple Health / Apple Watch Card -->
+        <div class="glass-panel col-6 col-md-12" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(76, 217, 100, 0.25); border-radius: 18px; padding: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+              <div style="width: 50px; height: 50px; border-radius: 14px; background: rgba(76, 217, 100, 0.15); color: #4cd964; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 15px rgba(76, 217, 100, 0.2);">
+                <i class="fa-brands fa-apple"></i>
+              </div>
+              <div>
+                <h3 style="margin: 0; font-size: 1.2rem; color: #FFF; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                  Apple Health
+                  <i class="fa-solid fa-heart-pulse" style="color: #ff2d55; font-size: 1rem;"></i>
+                </h3>
+                <div style="font-size: 0.8rem; color: var(--theme-text-muted); margin-top: 2px;">Apple Watch & iPhone HealthKit</div>
+              </div>
+            </div>
+            <span id="apple-health-status-badge" class="badge" style="background: rgba(255, 255, 255, 0.1); color: var(--theme-text-muted); padding: 5px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">
+              Ready to Connect
+            </span>
+          </div>
+
+          <p style="color: var(--theme-text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.25rem;">
+            Seamlessly feeds your Apple Watch pedometer steps, active energy expenditure, distance traveled, and resting pulse directly into HaLo Fitness.
+          </p>
+
+          <div style="background: rgba(0,0,0,0.25); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; border: 1px solid var(--theme-panel-border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+              <span style="font-size: 0.85rem; font-weight: 600; color: #FFF;">Automatic Biometric Sync</span>
+              <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                <input type="checkbox" id="toggle-apple-health" style="opacity: 0; width: 0; height: 0;">
+                <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 24px;"></span>
+              </label>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.78rem; color: var(--theme-text-muted);">
+              <div><i class="fa-solid fa-check" style="color: #4cd964;"></i> HealthKit Pedometer Steps</div>
+              <div><i class="fa-solid fa-check" style="color: #4cd964;"></i> Active Energy (kcal)</div>
+              <div><i class="fa-solid fa-check" style="color: #4cd964;"></i> Distance (km)</div>
+              <div><i class="fa-solid fa-check" style="color: #4cd964;"></i> Resting Heart Rate</div>
+            </div>
+          </div>
+
+          <!-- Quick Sync Action & Custom Step Simulator -->
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <button class="btn-action" id="btn-sync-apple-health" style="background: linear-gradient(135deg, #34c759, #30b0c7); color: #000; font-weight: 700; border: none; padding: 0.75rem 1rem; border-radius: 12px; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3);">
+              <i class="fa-solid fa-arrows-rotate"></i> Sync Apple Watch & Health
+            </button>
+
+            <!-- Manual / Quick Step Input for instant testing & offline entry -->
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
+              <input type="number" id="input-apple-health-steps" placeholder="Sync custom steps (e.g. 10500)" style="flex: 1; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid var(--theme-panel-border); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.8rem;">
+              <button type="button" class="btn-secondary" id="btn-apple-custom-sync" style="padding: 0.5rem 0.85rem; font-size: 0.78rem; white-space: nowrap;">
+                Push Steps
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Strava GPS Activities Card -->
+        <div class="glass-panel col-6 col-md-12" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(252, 76, 2, 0.25); border-radius: 18px; padding: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+              <div style="width: 50px; height: 50px; border-radius: 14px; background: rgba(252, 76, 2, 0.15); color: #FC4C02; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 15px rgba(252, 76, 2, 0.2);">
+                <i class="fa-brands fa-strava"></i>
+              </div>
+              <div>
+                <h3 style="margin: 0; font-size: 1.2rem; color: #FFF; font-weight: 700;">Strava Athlete Sync</h3>
+                <div style="font-size: 0.8rem; color: var(--theme-text-muted); margin-top: 2px;">GPS Running, Cycling & Hiking</div>
+              </div>
+            </div>
+            <span id="strava-status-badge" class="badge" style="background: rgba(255, 255, 255, 0.1); color: var(--theme-text-muted); padding: 5px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">
+              Not Connected
+            </span>
+          </div>
+
+          <p style="color: var(--theme-text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.25rem;">
+            Connect your Strava account to sync GPS trail runs, outdoor rides, pace, and elevation gain into your daily workout tracker.
+          </p>
+
+          <!-- Connect Prompt Section -->
+          <div id="strava-connect-section" style="background: rgba(0,0,0,0.25); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; border: 1px solid var(--theme-panel-border);">
+            <div style="font-size: 0.85rem; color: #FFF; font-weight: 600; margin-bottom: 0.4rem;">Link Athlete Profile</div>
+            <p style="font-size: 0.78rem; color: var(--theme-text-muted); margin-bottom: 0.85rem;">
+              Authorizes HaLo Fitness to read your public & club activities and automatically factor burned calories into your daily macro budget.
+            </p>
+            <button class="btn-action" id="btn-connect-strava" style="background: #FC4C02; color: #FFF; font-weight: 700; border: none; padding: 0.7rem 1.2rem; border-radius: 10px; font-size: 0.88rem; width: 100%; box-shadow: 0 4px 15px rgba(252, 76, 2, 0.3);">
+              <i class="fa-brands fa-strava"></i> Connect with Strava
+            </button>
+          </div>
+
+          <!-- Connected Profile Section (hidden until connected) -->
+          <div id="strava-connected-section" style="display: none; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; border: 1px solid rgba(252, 76, 2, 0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div id="strava-athlete-name" style="font-size: 0.95rem; font-weight: 700; color: #FFF;">Strava Athlete</div>
+                <div id="strava-athlete-stats" style="font-size: 0.78rem; color: #FC4C02; margin-top: 2px;">Sync Active</div>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="btn-action" id="btn-sync-strava" style="background: #FC4C02; color: #FFF; padding: 0.45rem 0.85rem; font-size: 0.78rem; border-radius: 8px; border: none;">
+                  <i class="fa-solid fa-arrows-rotate"></i> Sync Log
+                </button>
+                <button class="btn-secondary" id="btn-disconnect-strava" style="padding: 0.45rem 0.75rem; font-size: 0.78rem; border-radius: 8px;" title="Disconnect">
+                  <i class="fa-solid fa-link-slash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Strava Workouts Feed -->
+          <div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: #FFF; margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center;">
+              <span><i class="fa-solid fa-person-running" style="color: #FC4C02;"></i> Recent Strava Activities</span>
+              <span style="font-size: 0.72rem; color: var(--theme-text-muted);">GPS Tracked</span>
+            </div>
+            <div id="strava-activities-list" style="max-height: 200px; overflow-y: auto;">
+              <!-- Dynamic entries injected by connectedServices.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Wearables Guide & FAQ Card -->
+        <div class="glass-panel col-12" style="background: rgba(255,255,255,0.02); border-radius: 18px; padding: 1.25rem;">
+          <h4 style="color: #FFF; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-circle-question" style="color: var(--theme-primary);"></i> How Wearable Sync Works in HaLo Fitness
+          </h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.82rem; color: var(--theme-text-muted); line-height: 1.5;">
+            <div>
+              <strong style="color: #FFF; display: block; margin-bottom: 0.25rem;">🍏 Apple Health & Apple Watch:</strong>
+              When installed on iPhone (via PWA or native iOS build), HaLo connects to HealthKit to pull real-time steps, active calories burned, and resting pulse. Step data seamlessly updates the HaLo Step Pedometer and adjusts your net calorie deficit.
+            </div>
+            <div>
+              <strong style="color: #FFF; display: block; margin-bottom: 0.25rem;">🟧 Strava Outdoor Tracking:</strong>
+              Connecting Strava links your outdoor runs, trail walks, and bike sessions. Synced sessions are automatically logged into your HaLo workout history with distance, duration, and calories burned.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   <!-- DIALOG: AI MEAL SCANNER -->
   <dialog id="scanner-dialog" style="max-width: 600px; width: 90%;">
     <div class="dialog-header">
@@ -1804,6 +1993,9 @@
     <div class="nav-item" data-tab="tab-pedometer">
       <a href="#"><i class="fa-solid fa-shoe-prints"></i><span>Steps</span></a>
     </div>
+    <div class="nav-item" data-tab="tab-connected-devices">
+      <a href="#"><i class="fa-solid fa-link"></i><span>Sync</span></a>
+    </div>
     <div class="nav-item" data-tab="tab-diet">
       <a href="#"><i class="fa-solid fa-apple-whole"></i><span>Diet</span></a>
     </div>
@@ -1813,17 +2005,18 @@
   </nav>
 
   <!-- Client Application Scripts -->
-  <script src="/js/data.js?v=18"></script>
-  <script src="/js/translations.js?v=18"></script>
-  <script src="/js/muscleMap.js?v=18"></script>
-  <script src="/js/foodParser.js?v=18"></script>
-  <script src="/js/tracker.js?v=18"></script>
-  <script src="/js/pedometer.js?v=18"></script>
-  <script src="/js/capacitor-sqlite-bridge.js?v=18"></script>
-  <script src="/js/app.js?v=18"></script>
+  <script src="/js/data.js?v=19"></script>
+  <script src="/js/translations.js?v=19"></script>
+  <script src="/js/muscleMap.js?v=19"></script>
+  <script src="/js/foodParser.js?v=19"></script>
+  <script src="/js/tracker.js?v=19"></script>
+  <script src="/js/pedometer.js?v=19"></script>
+  <script src="/js/connectedServices.js?v=19"></script>
+  <script src="/js/capacitor-sqlite-bridge.js?v=19"></script>
+  <script src="/js/app.js?v=19"></script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js?v=18')
+      navigator.serviceWorker.register('/sw.js?v=19')
         .then(reg => {
           console.log('Service Worker Registered');
           if (reg) reg.update();

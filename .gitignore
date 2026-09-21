@@ -6,3 +6,8 @@ jdk17/
 jdk21/
 .DS_Store
 *.log
+database.db
+*.apk
+build/
+ios/
+android/
