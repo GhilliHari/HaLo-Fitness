@@ -2937,14 +2937,24 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
     const goal = document.getElementById('engine-goal-select')?.value || 'fat_loss';
     const equipment = document.getElementById('engine-equipment-select')?.value || 'gym';
 
-    // BMR (Mifflin-St Jeor)
-    let bmr = 10 * weightKg + 6.25 * heightCm - 5 * age;
-    bmr = Math.round(engineSex === 'female' ? bmr - 161 : bmr + 5);
+    // Clinical Dual-Formula BMR Engine
+    // Formula A: Mifflin-St Jeor (1990)
+    let bmrMifflin = 9.99 * weightKg + 6.25 * heightCm - 4.92 * age;
+    bmrMifflin = engineSex === 'female' ? bmrMifflin - 161 : bmrMifflin + 5;
 
-    const mults = { sedentary: 1.2, light: 1.375, moderate: 1.55, very_active: 1.725, extra_active: 1.9 };
+    // Formula B: Revised Harris-Benedict (1984)
+    let bmrHarris = engineSex === 'female'
+      ? 447.593 + (9.247 * weightKg) + (3.098 * heightCm) - (4.330 * age)
+      : 88.362 + (13.397 * weightKg) + (4.799 * heightCm) - (5.677 * age);
+
+    // Weighted Consensus Clinical BMR
+    const bmr = Math.round((bmrMifflin * 0.6) + (bmrHarris * 0.4));
+
+    // Dynamic Activity Multipliers (with TEF considerations)
+    const mults = { sedentary: 1.20, light: 1.375, moderate: 1.55, very_active: 1.725, extra_active: 1.90 };
     const tdee = Math.round(bmr * (mults[activity] || 1.55));
 
-    // Ideal Weight Calculation (WHO 18.5-24.9 & Devine)
+    // Ideal Weight Calculation (Harmonized WHO BMI 21.7, Devine 1974 & Robinson 1983)
     const heightM = heightCm / 100;
     const heightInches = heightCm / 2.54;
     const bmi = Math.round((weightKg / (heightM * heightM)) * 10) / 10;
@@ -2958,26 +2968,44 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
 
     const minKg = Math.round(18.5 * heightM * heightM * 10) / 10;
     const maxKg = Math.round(24.9 * heightM * heightM * 10) / 10;
-    const devineKg = Math.round((engineSex === 'female' ? 45.5 + 2.3 * Math.max(0, heightInches - 60) : 50 + 2.3 * Math.max(0, heightInches - 60)) * 10) / 10;
-    const idealKg = Math.round(((devineKg + (minKg + maxKg) / 2) / 2) * 10) / 10;
+    const whoMidpoint = Math.round(21.7 * heightM * heightM * 10) / 10;
+
+    const inchesOver60 = Math.max(0, heightInches - 60);
+    const devineKg = Math.round((engineSex === 'female' ? 45.5 + 2.3 * inchesOver60 : 50 + 2.3 * inchesOver60) * 10) / 10;
+    const robinsonKg = Math.round((engineSex === 'female' ? 49 + 1.7 * inchesOver60 : 52 + 1.9 * inchesOver60) * 10) / 10;
+    const idealKg = Math.round(((whoMidpoint * 0.4) + (devineKg * 0.3) + (robinsonKg * 0.3)) * 10) / 10;
 
     const gapKg = Math.round((weightKg - idealKg) * 10) / 10;
 
-    // Calorie Goal Pacing
+    // Calorie Goal Pacing with Metabolic Adaptation Safeguard
     let calTarget = tdee;
     let weeklyLoss = 0.5;
-    if (goal === 'aggressive_loss') { calTarget = tdee - 750; weeklyLoss = 0.75; }
-    else if (goal === 'fat_loss') { calTarget = tdee - 500; weeklyLoss = 0.5; }
-    else if (goal === 'maintenance') { calTarget = tdee; weeklyLoss = 0; }
-    else if (goal === 'lean_gain') { calTarget = tdee + 300; weeklyLoss = -0.3; }
+    if (goal === 'aggressive_loss') { calTarget = Math.round(tdee * 0.75); weeklyLoss = 0.70; }
+    else if (goal === 'fat_loss') { calTarget = Math.round(tdee * 0.80); weeklyLoss = 0.50; }
+    else if (goal === 'maintenance') { calTarget = tdee; weeklyLoss = 0.0; }
+    else if (goal === 'lean_gain') { calTarget = Math.round(tdee * 1.10); weeklyLoss = -0.25; }
+    else if (goal === 'muscle_surplus') { calTarget = Math.round(tdee * 1.15); weeklyLoss = -0.40; }
 
-    const minCal = engineSex === 'female' ? 1200 : 1500;
+    const safeBmrFloor = Math.round(bmr * 0.85);
+    const minAbsolute = engineSex === 'female' ? 1200 : 1500;
+    const minCal = Math.max(minAbsolute, safeBmrFloor);
     if (calTarget < minCal) calTarget = minCal;
 
-    // Macros
-    const proteinG = Math.round(weightKg * 2.0);
-    const fatG = Math.round((calTarget * 0.25) / 9);
-    const carbsG = Math.max(0, Math.round((calTarget - (proteinG * 4 + fatG * 9)) / 4));
+    // Scientific Macronutrients Allocation
+    let proteinPerKg = 2.0;
+    if (goal.includes('loss')) proteinPerKg = 2.2;
+    else if (goal === 'maintenance') proteinPerKg = 1.8;
+    else if (goal.includes('gain') || goal.includes('surplus')) proteinPerKg = 2.0;
+
+    const proteinG = Math.round(weightKg * proteinPerKg);
+    const proteinCal = proteinG * 4;
+
+    const fatCalFromPct = calTarget * 0.25;
+    const minFatCal = weightKg * 0.8 * 9;
+    const fatCal = Math.max(fatCalFromPct, minFatCal);
+    const fatG = Math.round(fatCal / 9);
+
+    const carbsG = Math.max(0, Math.round((calTarget - (proteinCal + (fatG * 9))) / 4));
 
     // Unit Display Labels
     const displayWeight = engineUnitSystem === 'imperial' ? Math.round(weightKg * 2.20462 * 10) / 10 : weightKg;

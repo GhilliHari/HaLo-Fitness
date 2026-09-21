@@ -120,9 +120,19 @@ export async function initDatabase() {
       potassium_mg INTEGER DEFAULT 0,
       omega3_g REAL DEFAULT 0.0,
       calcium_mg INTEGER DEFAULT 0,
-      iron_mg INTEGER DEFAULT 0
+      iron_mg INTEGER DEFAULT 0,
+      steps INTEGER DEFAULT 0,
+      calories_burned_steps INTEGER DEFAULT 0,
+      distance_km REAL DEFAULT 0.0
     )
   `);
+
+  // Safely add missing columns to logs if table existed previously
+  const logsTableInfo = await query("PRAGMA table_info(logs)");
+  const logColNames = logsTableInfo.map(c => c.name);
+  if (!logColNames.includes('steps')) await run("ALTER TABLE logs ADD COLUMN steps INTEGER DEFAULT 0");
+  if (!logColNames.includes('calories_burned_steps')) await run("ALTER TABLE logs ADD COLUMN calories_burned_steps INTEGER DEFAULT 0");
+  if (!logColNames.includes('distance_km')) await run("ALTER TABLE logs ADD COLUMN distance_km REAL DEFAULT 0.0");
 
   // Seed default demo user if not existing
   let demoUser = await get("SELECT * FROM users WHERE email = ?", ['demo@halofitness.com']);

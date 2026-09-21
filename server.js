@@ -96,27 +96,32 @@ app.post('/api/calorie-recommendation', async (req, res) => {
     const strActivity = (activity_level || 'moderate').toLowerCase();
     const strGoal = (fitness_goal || 'fat_loss').toLowerCase();
 
-    // 1. Calculate BMR (Mifflin-St Jeor)
-    let bmr = 10 * numWeight + 6.25 * numHeight - 5 * numAge;
-    if (strGender === 'female') {
-      bmr -= 161;
-    } else {
-      bmr += 5;
-    }
-    bmr = Math.round(bmr);
+    // 1. Calculate Dual-Formula Clinical BMR
+    // Formula A: Mifflin-St Jeor (1990) - High precision for contemporary body compositions
+    let bmrMifflin = 9.99 * numWeight + 6.25 * numHeight - 4.92 * numAge;
+    bmrMifflin = strGender === 'female' ? bmrMifflin - 161 : bmrMifflin + 5;
 
-    // 2. Activity Multiplier -> TDEE
+    // Formula B: Revised Harris-Benedict (Roza and Shizgal, 1984) - Established metabolic standard
+    let bmrHarris = strGender === 'female'
+      ? 447.593 + (9.247 * numWeight) + (3.098 * numHeight) - (4.330 * numAge)
+      : 88.362 + (13.397 * numWeight) + (4.799 * numHeight) - (5.677 * numAge);
+
+    // Weighted Consensus BMR (60% Mifflin-St Jeor + 40% Harris-Benedict)
+    const bmr = Math.round((bmrMifflin * 0.6) + (bmrHarris * 0.4));
+
+    // 2. Activity Multiplier -> TDEE with Thermic Effect of Food (TEF) Integration
     const multipliers = {
-      sedentary: 1.2,
-      light: 1.375,
-      moderate: 1.55,
-      very_active: 1.725,
-      extra_active: 1.9
+      sedentary: 1.20,       // Desk job, minimal walking (<3,000 steps/day)
+      light: 1.375,          // 1-3 light training sessions/wk + 5,000-7,500 steps/day
+      moderate: 1.55,        // 3-5 moderate sessions/wk + 8,000-10,000 steps/day
+      very_active: 1.725,    // 6-7 intense sessions/wk + 10,000+ steps/day
+      extra_active: 1.90     // 2x/day athlete training or heavy manual labor
     };
     const actMult = multipliers[strActivity] || 1.55;
     const tdee = Math.round(bmr * actMult);
+    const tef = Math.round(tdee * 0.10); // ~10% thermic effect of food digestion
 
-    // 3. Ideal Weight & BMI Calculation
+    // 3. Ideal Body Weight & Anthropometric Analysis
     const heightM = numHeight / 100;
     const heightInches = numHeight / 2.54;
     const bmi = Math.round((numWeight / (heightM * heightM)) * 10) / 10;
@@ -128,55 +133,87 @@ app.post('/api/calorie-recommendation', async (req, res) => {
     else if (bmi <= 29.9) { bmiCatName = 'Overweight'; bmiColor = '#FF9000'; }
     else { bmiCatName = 'Obese'; bmiColor = '#FF4D6D'; }
 
+    // Multi-Standard Ideal Weight Modeling
+    // A) WHO Healthy BMI Midpoint (21.7 kg/m²)
     const minKg = Math.round(18.5 * heightM * heightM * 10) / 10;
     const maxKg = Math.round(24.9 * heightM * heightM * 10) / 10;
-    const bmiMidpoint = (minKg + maxKg) / 2;
+    const whoMidpoint = Math.round(21.7 * heightM * heightM * 10) / 10;
 
+    // B) Devine Formula (1974)
     const inchesOver60 = Math.max(0, heightInches - 60);
     const devineKg = Math.round((strGender === 'female' ? 45.5 + 2.3 * inchesOver60 : 50 + 2.3 * inchesOver60) * 10) / 10;
-    const idealKg = Math.round(((devineKg + bmiMidpoint) / 2) * 10) / 10;
 
+    // C) Robinson Formula (1983)
+    const robinsonKg = Math.round((strGender === 'female' ? 49 + 1.7 * inchesOver60 : 52 + 1.9 * inchesOver60) * 10) / 10;
+
+    // Harmonized Clinical Ideal Weight
+    const idealKg = Math.round(((whoMidpoint * 0.4) + (devineKg * 0.3) + (robinsonKg * 0.3)) * 10) / 10;
     const weightGapKg = Math.round((numWeight - idealKg) * 10) / 10;
 
-    // 4. Goal Calorie Adjustment & Deficit Pacing
+    // 4. Goal Calorie Adjustment & Deficit Safety Pacing
     let calorieTarget = tdee;
     let weeklyLossKg = 0.5;
 
-    if (strGoal === 'aggressive_loss') { calorieTarget = tdee - 750; weeklyLossKg = 0.75; }
-    else if (strGoal === 'fat_loss') { calorieTarget = tdee - 500; weeklyLossKg = 0.5; }
-    else if (strGoal === 'maintenance') { calorieTarget = tdee; weeklyLossKg = 0; }
-    else if (strGoal === 'lean_gain') { calorieTarget = tdee + 300; weeklyLossKg = -0.3; }
-    else if (strGoal === 'muscle_surplus') { calorieTarget = tdee + 500; weeklyLossKg = -0.5; }
+    if (strGoal === 'aggressive_loss') {
+      calorieTarget = Math.round(tdee * 0.75); // 25% deficit
+      weeklyLossKg = 0.70;
+    } else if (strGoal === 'fat_loss') {
+      calorieTarget = Math.round(tdee * 0.80); // 20% deficit
+      weeklyLossKg = 0.50;
+    } else if (strGoal === 'maintenance') {
+      calorieTarget = tdee;
+      weeklyLossKg = 0.0;
+    } else if (strGoal === 'lean_gain') {
+      calorieTarget = Math.round(tdee * 1.10); // +10% lean surplus
+      weeklyLossKg = -0.25;
+    } else if (strGoal === 'muscle_surplus') {
+      calorieTarget = Math.round(tdee * 1.15); // +15% hyper-growth surplus
+      weeklyLossKg = -0.40;
+    }
 
-    // Safety check minimum floor
-    const minCalories = strGender === 'female' ? 1200 : 1500;
+    // Clinical Safety Floor: Never drop below minimum healthy threshold or 85% of BMR
+    const safeBmrFloor = Math.round(bmr * 0.85);
+    const minAbsoluteCalories = strGender === 'female' ? 1200 : 1500;
+    const absoluteFloor = Math.max(minAbsoluteCalories, safeBmrFloor);
     let isSafetyCapped = false;
-    if (calorieTarget < minCalories) {
-      calorieTarget = minCalories;
+
+    if (calorieTarget < absoluteFloor) {
+      calorieTarget = absoluteFloor;
       isSafetyCapped = true;
     }
 
-    // 5. Timeline Forecast
+    // 5. High-Precision Timeline to Goal
     let totalWeeks = 0;
     let completionDate = null;
-    if (weeklyLossKg > 0 && Math.abs(weightGapKg) > 0.2) {
-      totalWeeks = Math.round((Math.abs(weightGapKg) / weeklyLossKg) * 10) / 10;
+    if (Math.abs(weightGapKg) > 0.2 && weeklyLossKg !== 0) {
+      totalWeeks = Math.round((Math.abs(weightGapKg) / Math.abs(weeklyLossKg)) * 10) / 10;
       const targetDate = new Date();
       targetDate.setDate(targetDate.getDate() + Math.round(totalWeeks * 7));
       completionDate = targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
-    // 6. Macro Allocation
-    const proteinGrams = Math.round(numWeight * 2.0);
+    // 6. Scientific Macronutrient Partitioning
+    // Protein: High bio-availability targeting per kg body mass
+    let proteinPerKg = 2.0;
+    if (strGoal.includes('loss')) proteinPerKg = 2.2;     // High protein preserves muscle nitrogen in deficit
+    else if (strGoal === 'maintenance') proteinPerKg = 1.8;
+    else if (strGoal.includes('gain') || strGoal.includes('surplus')) proteinPerKg = 2.0;
+
+    const proteinGrams = Math.round(numWeight * proteinPerKg);
     const proteinCalories = proteinGrams * 4;
 
-    const fatCalories = calorieTarget * 0.25;
-    const fatGrams = Math.round(fatCalories / 9);
+    // Fats: 25% of total caloric intake (minimum 0.8g/kg for hormonal optimization)
+    const fatCaloriesFromPct = calorieTarget * 0.25;
+    const minFatCalories = numWeight * 0.8 * 9;
+    const finalFatCalories = Math.max(fatCaloriesFromPct, minFatCalories);
+    const fatGrams = Math.round(finalFatCalories / 9);
 
-    const carbCalories = Math.max(0, calorieTarget - (proteinCalories + fatCalories));
+    // Carbohydrates: Fuel for performance, glycogen, and CNS
+    const carbCalories = Math.max(0, calorieTarget - (proteinCalories + (fatGrams * 9)));
     const carbGrams = Math.round(carbCalories / 4);
 
-    const waterTarget = Math.round(numWeight * 35);
+    // Water Target (mL): 35mL per kg body weight + exercise compensation
+    const waterTarget = Math.round(numWeight * 35 + (strActivity === 'sedentary' ? 0 : 500));
 
     // 7. Tailored Workout Recommendation Split
     const workoutPlan = {
@@ -194,7 +231,10 @@ app.post('/api/calorie-recommendation', async (req, res) => {
 
     res.json({
       bmr,
+      bmr_mifflin: Math.round(bmrMifflin),
+      bmr_harris: Math.round(bmrHarris),
       tdee,
+      tef,
       daily_calorie_target: calorieTarget,
       protein_target: proteinGrams,
       carbs_target: carbGrams,
@@ -208,12 +248,13 @@ app.post('/api/calorie-recommendation', async (req, res) => {
       ideal_weight_min: minKg,
       ideal_weight_max: maxKg,
       devine_weight: devineKg,
+      robinson_weight: robinsonKg,
       weight_gap_kg: weightGapKg,
       total_weeks_to_ideal: totalWeeks,
       completion_date: completionDate,
       workout_plan: workoutPlan,
-      formula: 'Mifflin-St Jeor BMR + WHO Healthy BMI (18.5-24.9) & Devine Ideal Weight',
-      recommendation_summary: `For height ${numHeight}cm & weight ${numWeight}kg, your medical ideal weight target is ${idealKg}kg (healthy band: ${minKg}-${maxKg}kg). Daily target: ${calorieTarget} kcal/day (${weeklyLossKg > 0 ? `-${Math.round(tdee - calorieTarget)} kcal deficit` : 'maintenance'}).`
+      formula: 'Dual Consensus BMR (Mifflin-St Jeor + Revised Harris-Benedict) + WHO / Devine / Robinson Ideal Weight',
+      recommendation_summary: `For ${numHeight}cm & ${numWeight}kg, your medical ideal weight target is ${idealKg}kg (healthy band: ${minKg}-${maxKg}kg). Daily target: ${calorieTarget} kcal/day (${weeklyLossKg > 0 ? `-${Math.round(tdee - calorieTarget)} kcal deficit` : 'maintenance'}).`
     });
   } catch (err) {
     res.status(500).json({ error: 'Failed to calculate recommendation', details: err.message });
@@ -329,20 +370,26 @@ app.post('/api/tracker/log', async (req, res) => {
       potassium_mg,
       omega3_g,
       calcium_mg,
-      iron_mg
+      iron_mg,
+      steps,
+      calories_burned_steps,
+      distance_km
     } = req.body;
 
     if (!date) {
       return res.status(400).json({ error: 'Date is required (YYYY-MM-DD)' });
     }
 
-    // Check if entry exists to preserve user_weight if not supplied
-    const existing = await get('SELECT user_weight FROM logs WHERE date = ?', [date]);
+    // Check if entry exists to preserve user_weight and steps if not supplied
+    const existing = await get('SELECT user_weight, steps, calories_burned_steps, distance_km FROM logs WHERE date = ?', [date]);
     const finalWeight = user_weight !== undefined ? user_weight : (existing ? existing.user_weight : 0.0);
+    const finalSteps = steps !== undefined ? steps : (existing ? existing.steps : 0);
+    const finalCalBurnedSteps = calories_burned_steps !== undefined ? calories_burned_steps : (existing ? existing.calories_burned_steps : 0);
+    const finalDistKm = distance_km !== undefined ? distance_km : (existing ? existing.distance_km : 0.0);
 
     await run(`
-      INSERT INTO logs (date, calories_consumed, protein_g, carbs_g, fats_g, water_ml, workout_duration_mins, workout_completed, workout_style, notes, user_weight, magnesium_mg, zinc_mg, vitamin_d_iu, potassium_mg, omega3_g, calcium_mg, iron_mg)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO logs (date, calories_consumed, protein_g, carbs_g, fats_g, water_ml, workout_duration_mins, workout_completed, workout_style, notes, user_weight, magnesium_mg, zinc_mg, vitamin_d_iu, potassium_mg, omega3_g, calcium_mg, iron_mg, steps, calories_burned_steps, distance_km)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(date) DO UPDATE SET
         calories_consumed = excluded.calories_consumed,
         protein_g = excluded.protein_g,
@@ -360,7 +407,10 @@ app.post('/api/tracker/log', async (req, res) => {
         potassium_mg = excluded.potassium_mg,
         omega3_g = excluded.omega3_g,
         calcium_mg = excluded.calcium_mg,
-        iron_mg = excluded.iron_mg
+        iron_mg = excluded.iron_mg,
+        steps = COALESCE(excluded.steps, logs.steps),
+        calories_burned_steps = COALESCE(excluded.calories_burned_steps, logs.calories_burned_steps),
+        distance_km = COALESCE(excluded.distance_km, logs.distance_km)
     `, [
       date,
       calories_consumed || 0,
@@ -379,10 +429,13 @@ app.post('/api/tracker/log', async (req, res) => {
       potassium_mg || 0,
       omega3_g || 0.0,
       calcium_mg || 0,
-      iron_mg || 0
+      iron_mg || 0,
+      finalSteps,
+      finalCalBurnedSteps,
+      finalDistKm
     ]);
 
-    res.json({ message: 'Log entry saved successfully', date });
+    res.json({ message: 'Log entry saved successfully', date, steps: finalSteps, calories_burned_steps: finalCalBurnedSteps, distance_km: finalDistKm });
   } catch (err) {
     res.status(500).json({ error: 'Failed to save log entry', details: err.message });
   }
