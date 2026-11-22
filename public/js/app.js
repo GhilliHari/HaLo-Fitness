@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             b.classList.remove('active');
           }
         });
-        setWorkoutSplit('custom');
+        setWorkoutSplit(state.activeSplit || 'custom');
       });
     });
 
@@ -1606,70 +1606,168 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
   }
 
   // Helper to match workout items with keys in NATURE_FIT_DATA.exercises
-  function findExerciseKey(text) {
-    let lowerText = text.toLowerCase().trim();
+  function findExerciseKey(rawText) {
+    if (!rawText || typeof rawText !== 'string') return null;
+    let text = rawText.toLowerCase().trim();
+    
     // Clean dropset suffix (e.g. "+ 2 drops", "+ 1 drop")
-    lowerText = lowerText.replace(/\+\s*(?:\d+\s*(?:to\s*)?\d*)\s*drops?/gi, '');
-    lowerText = lowerText.replace(/\+\s*\d+\s*drop/gi, '');
-    lowerText = lowerText.trim();
-    
-    const keys = Object.keys(window.NATURE_FIT_DATA.exercises);
-    
-    for (const key of keys) {
-      const ex = window.NATURE_FIT_DATA.exercises[key];
+    text = text.replace(/\+\s*(?:\d+\s*(?:to\s*)?\d*)\s*drops?/gi, '');
+    text = text.replace(/\+\s*\d+\s*drop/gi, '');
+    // Remove numbering like 1a., 1b., 2a., 2b., 1., 2.
+    text = text.replace(/^[0-9]+[a-z]?[\.\)]\s*/i, '');
+    // Remove category prefixes if any were left
+    text = text.replace(/^(warm-up|main|cardio & vo2max|cardio|vo2max|agility & footwork|agility|stability & 6-pack|stability & core|finisher|cool-down|superset)\s*:\s*/i, '');
+    text = text.trim();
+
+    const exercises = window.NATURE_FIT_DATA.exercises;
+    if (!exercises) return null;
+
+    // Priority 1: Exact matches against exercises dict keys and exact exercise names
+    for (const [key, ex] of Object.entries(exercises)) {
       const exName = ex.name.toLowerCase().trim();
-      
-      if (lowerText === exName) return key;
-      if (lowerText.includes(exName) || exName.includes(lowerText)) {
-        return key;
-      }
+      if (text === exName || text === key) return key;
     }
+
+    // Priority 2: High-specificity Multi-word / Targeted movements (AVOID KEYWORD COLLISIONS)
+    // Norwegian 4x4
+    if (text.includes('4x4') || text.includes('norwegian')) return 'norwegian-4x4';
     
-    // Secondary keyword mapping
-    if (lowerText.includes('hip thrust')) return 'hip-thrust';
-    if (lowerText.includes('leg extension')) return 'leg-extension';
-    if (lowerText.includes('leg curl')) return 'leg-curl';
-    if (lowerText.includes('shoulder press')) return 'shoulder-press';
-    if (lowerText.includes('lateral raise')) return 'dumbbell-lateral-raise';
-    if (lowerText.includes('preacher curl') || lowerText.includes('ez-bar curl') || lowerText.includes('biceps curl') || lowerText.includes('dumbbell curl') || lowerText.includes('cable biceps curl') || lowerText.includes('curl')) return 'dumbbell-biceps-curl';
-    if (lowerText.includes('pressdown') || lowerText.includes('press down')) return 'triceps-pressdown';
-    if (lowerText.includes('face pull')) return 'cable-face-pull';
-    if (lowerText.includes('rear delt') || lowerText.includes('pec deck fly') || lowerText.includes('pec dec fly') || lowerText.includes('reverse pec') || lowerText.includes('pec fly')) return 'rear-delt-fly';
-    if (lowerText.includes('dumbbell press') || lowerText.includes('db press') || lowerText.includes('flat dumbbell') || lowerText.includes('incline dumbbell')) return 'dumbbell-press';
-    if (lowerText.includes('rdl') || lowerText.includes('romanian deadlift')) return 'romanian-deadlift';
-    if (lowerText.includes('split squat') || lowerText.includes('lunge') || lowerText.includes('step-up') || lowerText.includes('step up')) return 'bulgarian-split-squat';
-    if (lowerText.includes('push-up') || lowerText.includes('pushup') || lowerText.includes('push up')) return 'push-up';
-    if (lowerText.includes('pull-up') || lowerText.includes('pullup') || lowerText.includes('pull up') || lowerText.includes('chin-up')) return 'pull-up';
-    if (lowerText.includes('calf raise')) return 'calf-raise';
-    if (lowerText.includes('tibialis')) return 'tibialis-raise';
-    if (lowerText.includes('knee raise')) return 'hanging-knee-raise';
-    if (lowerText.includes('dip machine') || lowerText.includes('assisted dip') || lowerText.includes('dips')) return 'assisted-dip';
-    if (lowerText.includes('incline walk') || lowerText.includes('treadmill walk')) return 'incline-walk';
-    if (lowerText.includes('glute bridge')) return 'hip-thrust';
-    if (lowerText.includes('bird dog') || lowerText.includes('dead bug') || lowerText.includes('side plank') || lowerText.includes('mountain climber') || lowerText.includes('reverse crunch')) return 'core-stability';
-    if (lowerText.includes('back extension')) return 'romanian-deadlift';
-    if (lowerText.includes('skull crusher') || lowerText.includes('skullcrusher')) return 'skull-crusher';
+    // Dragon flag
+    if (text.includes('dragon flag')) return 'dragon-flag';
     
-    // Warmups, mobility, stretching, and active recovery walks
-    if (lowerText.includes('band pull-apart') || lowerText.includes('band pull apart')) return 'warm-up-mobility';
-    if (lowerText.includes('arm circle') || lowerText.includes('shoulder roll') || lowerText.includes('scapular') || lowerText.includes('thoracic') || lowerText.includes('joint circle') || lowerText.includes('hip circle') || lowerText.includes('leg swing') || lowerText.includes('ramp-up') || lowerText.includes('warm-up') || lowerText.includes('warmup') || lowerText.includes('arms')) return 'warm-up-mobility';
-    if (lowerText.includes('stretch') || lowerText.includes('stretching') || lowerText.includes('vinyasa') || lowerText.includes('mobility flow') || lowerText.includes('hamstring fold') || lowerText.includes('release')) return 'mobility-stretching';
-    if (lowerText.includes('brisk walk') || lowerText.includes('easy walk') || lowerText.includes('slow walk') || lowerText.includes('easy cycling') || lowerText.includes('walk') || lowerText.includes('cycling') || lowerText.includes('bike') || lowerText.includes('rower') || lowerText.includes('treadmill')) return 'brisk-walk';
+    // Vacuum
+    if (text.includes('stomach vacuum') || text.includes('vacuum')) return 'stomach-vacuum';
     
-    // Default fallbacks for common terms
-    if (lowerText.includes('squat')) return 'barbell-squat';
-    if (lowerText.includes('bench press') || lowerText.includes('chest press') || lowerText.includes('bench') || lowerText.includes('machine chest')) return 'bench-press';
-    if (lowerText.includes('deadlift')) return 'deadlift';
-    if (lowerText.includes('lat pulldown') || lowerText.includes('pulldown') || lowerText.includes('pull down')) return 'lat-pulldown';
-    if (lowerText.includes('pec dec') || lowerText.includes('pec deck') || lowerText.includes('pec fly')) return 'pec-dec-fly';
-    if (lowerText.includes('rowing') || lowerText.includes('row')) return 'row-intervals';
-    if (lowerText.includes('assault bike') || lowerText.includes('bike')) return 'assault-bike';
-    if (lowerText.includes('kettlebell swing') || lowerText.includes('swing')) return 'kb-swing-tabata';
-    if (lowerText.includes('burpee')) return 'burpee-circuit';
-    if (lowerText.includes('thruster')) return 'barbell-thruster';
-    if (lowerText.includes('wall ball') || lowerText.includes('wall throw')) return 'wall-balls';
-    if (lowerText.includes('leg press')) return 'leg-press';
+    // Cable crunch
+    if (text.includes('cable crunch')) return 'cable-crunch';
     
+    // Ab wheel rollout
+    if (text.includes('ab wheel') || text.includes('wheel rollout') || text.includes('ab rollout')) return 'ab-wheel';
+    
+    // Pallof press
+    if (text.includes('pallof')) return 'pallof-press';
+    
+    // Woodchop
+    if (text.includes('woodchop') || text.includes('wood chop')) return 'cable-woodchop';
+    
+    // Suitcase carry
+    if (text.includes('suitcase') || text.includes('suit case')) return 'suitcase-carry';
+    
+    // Dead bug
+    if (text.includes('dead bug') || text.includes('deadbug')) return 'dead-bug';
+    
+    // Bird dog
+    if (text.includes('bird dog') || text.includes('birddog')) return 'bird-dog';
+    
+    // Side plank
+    if (text.includes('side plank')) return 'side-plank';
+    
+    // Reverse crunch
+    if (text.includes('reverse crunch')) return 'reverse-crunch';
+    
+    // Plank hold / Plank
+    if (text.includes('plank hold') || text.includes('isometric plank') || text.includes('plank isometric') || text.includes('straight-arm plank') || text.includes('elbow plank') || (text.includes('plank') && !text.includes('side plank'))) return 'plank-hold';
+
+    // Agility ladder
+    if (text.includes('ladder') || text.includes('agility ladder')) return 'agility-ladder';
+    
+    // Skater bounds
+    if (text.includes('skater') || text.includes('skater bound')) return 'skater-bounds';
+    
+    // Shuttle run
+    if (text.includes('shuttle run') || text.includes('shuttle runs') || text.includes('5-10-5')) return 'shuttle-run';
+    
+    // Back extension / Hyperextension
+    if (text.includes('back extension') || text.includes('hyperextension') || text.includes('hyper-extension') || text.includes('roman chair')) return 'back-extension';
+
+    // Hanging leg / knee raises
+    if (text.includes('hanging leg raise') || text.includes('toes to bar') || text.includes('toes-to-bar') || text.includes('hanging straight leg')) return 'hanging-leg-raise';
+    if (text.includes('hanging knee raise') || text.includes('knee raise') || text.includes("captain's chair")) return 'hanging-knee-raise';
+    
+    // Specific Curls
+    if (text.includes('hammer curl')) return 'hammer-curl';
+    if (text.includes('preacher curl') || text.includes('preacher bench')) return 'preacher-curl';
+    if (text.includes('ez-bar curl') || text.includes('biceps curl') || text.includes('dumbbell curl') || text.includes('cable biceps curl') || text.includes('cable curl') || text.includes('bicep curl') || text.includes('biceps')) return 'dumbbell-biceps-curl';
+
+    // Triceps
+    if (text.includes('skull crusher') || text.includes('skullcrusher')) return 'skull-crusher';
+    if (text.includes('overhead triceps') || text.includes('overhead extension')) return 'overhead-triceps-ext';
+    if (text.includes('close-grip bench') || text.includes('close grip bench')) return 'close-grip-bench';
+    if (text.includes('pressdown') || text.includes('press down') || text.includes('triceps pushdown') || text.includes('triceps')) return 'triceps-pressdown';
+
+    // Specific Squats & Lower
+    if (text.includes('hack squat')) return 'hack-squat';
+    if (text.includes('front squat')) return 'front-squat';
+    if (text.includes('goblet squat')) return 'goblet-squat';
+    if (text.includes('split squat') || text.includes('bulgarian') || text.includes('lunge') || text.includes('step-up') || text.includes('step up')) return 'bulgarian-split-squat';
+    if (text.includes('back squat') || text.includes('barbell squat') || text.includes('barbell back squat')) return 'barbell-squat';
+    if (text.includes('leg press')) return 'leg-press';
+    if (text.includes('leg extension')) return 'leg-extension';
+    if (text.includes('leg curl')) return 'leg-curl';
+    if (text.includes('calf raise') || text.includes('standing calf') || text.includes('seated calf')) return 'calf-raise';
+    if (text.includes('tibialis') || text.includes('tibialis raise')) return 'tibialis-raise';
+    if (text.includes('hip thrust') || text.includes('glute bridge')) return 'hip-thrust';
+    if (text.includes('romanian deadlift') || text.includes('rdl') || text.includes('dumbbell rdl')) return 'romanian-deadlift';
+    if (text.includes('deadlift') || text.includes('conventional deadlift')) return 'deadlift';
+
+    // Shoulders & Chest
+    if (text.includes('landmine press') || text.includes('landmine')) return 'landmine-press';
+    if (text.includes('lateral raise') || text.includes('side lateral')) return 'dumbbell-lateral-raise';
+    if (text.includes('face pull') || text.includes('face-pull')) return 'cable-face-pull';
+    if (text.includes('rear delt') || text.includes('reverse fly')) return 'rear-delt-fly';
+    if (text.includes('shrug') || text.includes('dumbbell shrug')) return 'dumbbell-shrug';
+    if (text.includes('shoulder press') || text.includes('overhead press') || text.includes('military press')) return 'shoulder-press';
+    if (text.includes('pec dec') || text.includes('pec deck') || text.includes('reverse pec')) return 'pec-dec-fly';
+    if (text.includes('cable fly') || text.includes('cable chest fly')) return 'cable-fly';
+    if (text.includes('incline dumbbell press') || text.includes('dumbbell bench') || text.includes('flat dumbbell press') || text.includes('dumbbell press') || text.includes('db press')) return 'dumbbell-press';
+    
+    // Benchmark guard: check benchmark BEFORE bench press so "rowing benchmark" is NOT bench press
+    if (text.includes('benchmark')) {
+      if (text.includes('row')) return 'row-intervals';
+      if (text.includes('bike')) return 'assault-bike';
+      if (text.includes('burpee')) return 'burpee-circuit';
+    }
+    if (text.includes('bench press') || text.includes('barbell bench') || text.includes('chest press') || text.includes('machine chest') || (text.includes('bench') && !text.includes('benchmark'))) return 'bench-press';
+
+    // Back & Pull
+    if (text.includes('straight arm pulldown') || text.includes('straight-arm pulldown') || text.includes('straight-arm cable pulldown')) return 'straight-arm-pulldown';
+    if (text.includes('lat pulldown') || text.includes('pulldown') || text.includes('pull down')) return 'lat-pulldown';
+    if (text.includes('barbell bent-over row') || text.includes('barbell row') || text.includes('bent-over row') || text.includes('bent over row') || text.includes('pendlay row')) return 'barbell-row';
+    if (text.includes('seated cable row') || text.includes('cable row')) return 'cable-row';
+    if (text.includes('dumbbell row') || text.includes('one-arm dumbbell row') || text.includes('db row')) return 'dumbbell-row';
+    if (text.includes('assisted dip') || text.includes('dip machine') || text.includes('dips') || text.includes('parallel bar dip')) return 'assisted-dip';
+    if (text.includes('pull-up') || text.includes('pullup') || text.includes('pull up') || text.includes('chin-up') || text.includes('chin up')) return 'pull-up';
+    if (text.includes('push-up') || text.includes('pushup') || text.includes('push up')) return 'push-up';
+
+    // Specific Functional / Tabata
+    if (text.includes('kettlebell swing') || text.includes('kb swing') || text.includes('swing')) return 'kb-swing-tabata';
+    if (text.includes('burpee') || text.includes('burpees')) return 'burpee-circuit';
+    if (text.includes('thruster') || text.includes('barbell thruster')) return 'barbell-thruster';
+    if (text.includes('wall ball') || text.includes('wall balls') || text.includes('wall throw')) return 'wall-balls';
+    if (text.includes('jump rope') || text.includes('skipping') || text.includes('box jump') || text.includes('line hop') || text.includes('dot drill')) return 'jump-rope';
+    
+    // Cardio & Conditioning
+    if (text.includes('rowing') || text.includes('rower') || text.includes('row intervals') || text.includes('2000m row') || text.includes('500m sprint') || text.includes('500m row')) return 'row-intervals';
+    if (text.includes('assault bike') || text.includes('air bike') || text.includes('echo bike') || text.includes('bike sprint')) return 'assault-bike';
+    if (text.includes('incline walk') || text.includes('treadmill incline')) return 'incline-walk';
+    if (text.includes('brisk walk') || text.includes('outdoor walk') || text.includes('zone-2') || text.includes('light walking') || text.includes('easy walk') || text.includes('treadmill walk')) return 'brisk-walk';
+    if (text.includes('bike') || text.includes('cycling') || text.includes('spin on bike')) return 'assault-bike';
+
+    // Generic Core
+    if (text.includes('crunch')) return 'cable-crunch';
+    if (text.includes('core stability') || text.includes('core')) return 'core-stability';
+
+    // Mobility & Warmup
+    if (text.includes('band pull-apart') || text.includes('arm circle') || text.includes('shoulder roll') || text.includes('scapular') || text.includes('thoracic') || text.includes('joint circle') || text.includes('joint car') || text.includes('cars') || text.includes('hip 90/90') || text.includes('ramp-up') || text.includes('warm-up') || text.includes('warmup')) return 'warm-up-mobility';
+    if (text.includes('stretch') || text.includes('stretching') || text.includes('vinyasa') || text.includes('mobility flow') || text.includes('foam roll') || text.includes('breathing') || text.includes('decompression')) return 'mobility-stretching';
+
+    // Fallback broad matches
+    if (text.includes('squat')) return 'barbell-squat';
+    if (text.includes('bench')) return 'bench-press';
+    if (text.includes('press')) return 'shoulder-press';
+    if (text.includes('row')) return 'row-intervals';
+    if (text.includes('walk')) return 'brisk-walk';
+
     return null;
   }
 
@@ -1686,16 +1784,17 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
     let jsDay = new Date().getDay();
     let planIndex = jsDay === 0 ? 6 : jsDay - 1;
 
-    if (split === 'custom') {
+    if (split === 'custom' || split === 'shred' || split === 'custom_power') {
       const weekData = data.weeks ? data.weeks[state.activeWeek || 1] : null;
       if (weekData && weekData[planIndex]) {
         todayWorkoutStyle = weekData[planIndex].style;
-        todayDuration = "45-60 mins";
+        todayDuration = split === 'custom_power' ? "60-75 mins" : (split === 'shred' ? "55-65 mins" : "45-60 mins");
       }
     } else {
-      if (planIndex >= 0 && planIndex < 5 && data.days && data.days[planIndex]) {
+      if (data.days && planIndex >= 0 && planIndex < data.days.length && data.days[planIndex]) {
         todayWorkoutStyle = data.days[planIndex].style;
-        todayDuration = "45 mins";
+        const isRest = todayWorkoutStyle.toLowerCase().includes('rest') || todayWorkoutStyle.toLowerCase().includes('regeneration');
+        todayDuration = isRest ? "20-30 mins" : "50-60 mins";
       } else {
         todayWorkoutStyle = "Rest & Recovery";
         todayDuration = "15-30 mins";
@@ -1729,10 +1828,44 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
 
 
 
-    // Show/hide week selector container for Custom Plan
+    // Show/hide week selector container for Custom Plan & Shred Plan
     const weekSelectorContainer = document.getElementById('workout-week-selector-container');
+    const weekSelectorLabel = document.getElementById('workout-week-selector-label');
+    const weekBtns = document.querySelectorAll('.week-btn');
     if (weekSelectorContainer) {
-      weekSelectorContainer.style.display = split === 'custom' ? 'block' : 'none';
+      const isMultiWeek = split === 'custom' || split === 'shred' || split === 'custom_power';
+      weekSelectorContainer.style.display = isMultiWeek ? 'block' : 'none';
+      if (isMultiWeek) {
+        if (split === 'shred') {
+          if (weekSelectorLabel) weekSelectorLabel.textContent = "SELECT 3-MONTH TRAINING PHASE:";
+          const phaseNames = [
+            "Phase 1: W1-4 (Base)",
+            "Phase 2: W5-8 (VO2max)",
+            "Phase 3: W9-11 (Shred)",
+            "Phase 4: W12 (Peak)"
+          ];
+          weekBtns.forEach((btn, idx) => {
+            if (phaseNames[idx]) btn.textContent = phaseNames[idx];
+          });
+        } else if (split === 'custom_power') {
+          if (weekSelectorLabel) weekSelectorLabel.textContent = "SELECT 10X STRENGTH PHASE:";
+          const phaseNames = [
+            "Week 1: Base Anchor",
+            "Week 2: Heavy Overload",
+            "Week 3: Peak Waves",
+            "Week 4: Power Deload"
+          ];
+          weekBtns.forEach((btn, idx) => {
+            if (phaseNames[idx]) btn.textContent = phaseNames[idx];
+          });
+        } else {
+          if (weekSelectorLabel) weekSelectorLabel.textContent = "SELECT WEEK:";
+          const defaultNames = ["Week 1", "Week 2", "Week 3", "Week 4"];
+          weekBtns.forEach((btn, idx) => {
+            if (defaultNames[idx]) btn.textContent = defaultNames[idx];
+          });
+        }
+      }
     }
 
     // Render Weekly Routine Plan text
@@ -1827,11 +1960,20 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
         let icon = '<i class="fa-solid fa-circle-dot"></i>';
         let badgeClass = 'secondary';
         const lowerTitle = title.toLowerCase();
-        if (lowerTitle.includes('warm-up')) {
+        if (lowerTitle.includes('warm-up') || lowerTitle.includes('mobility')) {
           icon = '<i class="fa-solid fa-person-running"></i>';
           badgeClass = 'info';
-        } else if (lowerTitle.includes('main')) {
+        } else if (lowerTitle.includes('main') || lowerTitle.includes('strength')) {
           icon = '<i class="fa-solid fa-dumbbell"></i>';
+          badgeClass = 'primary';
+        } else if (lowerTitle.includes('vo2max') || lowerTitle.includes('cardio')) {
+          icon = '<i class="fa-solid fa-heart-pulse"></i>';
+          badgeClass = 'danger';
+        } else if (lowerTitle.includes('agility') || lowerTitle.includes('footwork') || lowerTitle.includes('speed')) {
+          icon = '<i class="fa-solid fa-bolt"></i>';
+          badgeClass = 'warning';
+        } else if (lowerTitle.includes('stability') || lowerTitle.includes('core') || lowerTitle.includes('6-pack') || lowerTitle.includes('abs')) {
+          icon = '<i class="fa-solid fa-shield-halved"></i>';
           badgeClass = 'primary';
         } else if (lowerTitle.includes('superset')) {
           icon = '<i class="fa-solid fa-arrows-spin"></i>';
@@ -1839,7 +1981,7 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
         } else if (lowerTitle.includes('finisher')) {
           icon = '<i class="fa-solid fa-fire"></i>';
           badgeClass = 'danger';
-        } else if (lowerTitle.includes('cool-down')) {
+        } else if (lowerTitle.includes('cool-down') || lowerTitle.includes('recovery')) {
           icon = '<i class="fa-solid fa-wind"></i>';
           badgeClass = 'success';
         }
@@ -1889,7 +2031,7 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
       card.className = `custom-day-card ${index === planIndex ? 'active' : ''}`;
       
       let bodyHtml = '';
-      if (split === 'custom') {
+      if (split === 'custom' || split === 'shred' || split === 'custom_power') {
         bodyHtml = formatCustomActivities(d.activities);
       } else {
         bodyHtml = `<div class="custom-activities-list" style="margin-top: 1rem;">
@@ -2052,14 +2194,20 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
     
     const enLabel = state.lang === 'ta' ? 'ஆங்கில வீடியோ' : 'English Video';
     const taLabel = state.lang === 'ta' ? 'தமிழ் வீடியோ' : 'Tamil Video';
+    const instaLabel = state.lang === 'ta' ? 'இன்ஸ்டாகிராம் ரீல்' : 'Instagram Reel';
+    const hasInsta = !!(ex.videoInsta || ex.instaUrl);
 
     actionContainer.innerHTML = `
       <button class="btn-action" id="detail-play-en"><i class="fa-solid fa-video"></i> ${enLabel}</button>
       <button class="btn-action" id="detail-play-ta" style="background: var(--theme-secondary); color: #000;"><i class="fa-solid fa-video"></i> ${taLabel}</button>
+      ${hasInsta ? `<button class="btn-action" id="detail-play-insta" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff;"><i class="fa-brands fa-instagram"></i> ${instaLabel}</button>` : ''}
     `;
 
     document.getElementById('detail-play-en').addEventListener('click', () => playVideo(key, 'en'));
     document.getElementById('detail-play-ta').addEventListener('click', () => playVideo(key, 'ta'));
+    if (hasInsta) {
+      document.getElementById('detail-play-insta')?.addEventListener('click', () => playVideo(key, 'insta'));
+    }
 
     // Smooth scroll to the details/muscle map panel on mobile screens
     if (shouldScroll && window.innerWidth <= 1024) {
@@ -2076,12 +2224,19 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
     const ex = window.NATURE_FIT_DATA.exercises[state.activeVideoKey];
     if (!ex) return;
     
-    // Play Tamil video for Tamil and Tanglish guides, otherwise English video
-    const videoUrl = (lang === 'ta' || lang === 'tg') ? ex.videoTa : ex.videoEn;
-    
+    let videoUrl = ex.videoEn;
     let languageTitle = 'English';
-    if (lang === 'ta') languageTitle = 'Tamil / தமிழ்';
-    else if (lang === 'tg') languageTitle = 'Tanglish';
+    
+    if (lang === 'ta') {
+      videoUrl = ex.videoTa || ex.videoEn;
+      languageTitle = 'Tamil / தமிழ்';
+    } else if (lang === 'tg') {
+      videoUrl = ex.videoTa || ex.videoEn;
+      languageTitle = 'Tanglish';
+    } else if (lang === 'insta') {
+      videoUrl = ex.videoInsta || ex.instaUrl || ex.videoEn;
+      languageTitle = 'Instagram Reel';
+    }
     
     let instructionsText = ex.instructionsEn;
     if (lang === 'ta') instructionsText = ex.instructionsTa || ex.instructionsEn;
@@ -2094,29 +2249,60 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
     document.getElementById('video-frame').src = videoUrl;
     document.getElementById('video-dialog-instruction').textContent = instructionsText;
     
-    // Set watch on YouTube URL
-    const watchUrl = videoUrl.replace('/embed/', '/watch?v=');
+    // Set watch buttons
     const watchBtn = document.getElementById('btn-watch-youtube');
-    if (watchBtn) {
-      watchBtn.href = watchUrl;
+    const instaBtn = document.getElementById('btn-watch-insta');
+
+    if (lang === 'insta') {
+      const targetInsta = ex.instaUrl || ex.videoInsta || '#';
+      if (instaBtn) {
+        instaBtn.href = targetInsta;
+        instaBtn.style.display = 'inline-flex';
+      }
+      if (watchBtn) watchBtn.style.display = 'none';
+    } else {
+      const watchUrl = (videoUrl && videoUrl.includes('/embed/')) ? videoUrl.replace('/embed/', '/watch?v=') : videoUrl;
+      if (watchBtn) {
+        watchBtn.href = watchUrl;
+        watchBtn.style.display = 'inline-flex';
+      }
+      if (instaBtn) {
+        if (ex.instaUrl || ex.videoInsta) {
+          instaBtn.href = ex.instaUrl || ex.videoInsta;
+          instaBtn.style.display = 'inline-flex';
+        } else {
+          instaBtn.style.display = 'none';
+        }
+      }
     }
     
     // Update button active styles in the modal
     const btnEn = document.getElementById('modal-lang-en');
     const btnTa = document.getElementById('modal-lang-ta');
     const btnTg = document.getElementById('modal-lang-tg');
+    const btnInsta = document.getElementById('modal-lang-insta');
     
-    [btnEn, btnTa, btnTg].forEach(btn => {
+    [btnEn, btnTa, btnTg, btnInsta].forEach(btn => {
       if (!btn) return;
       if (btn.dataset.lang === lang) {
-        btn.style.background = 'var(--theme-primary)';
-        btn.style.color = '#000';
+        if (lang === 'insta') {
+          btn.style.background = 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)';
+          btn.style.color = '#fff';
+        } else {
+          btn.style.background = 'var(--theme-primary)';
+          btn.style.color = '#000';
+        }
         btn.style.fontWeight = 'bold';
         btn.style.border = 'none';
       } else {
         btn.style.background = 'transparent';
-        btn.style.color = 'var(--theme-text-main)';
-        btn.style.border = '1px solid var(--theme-panel-border)';
+        if (btn === btnInsta) {
+          btn.style.color = '#E1306C';
+          btn.style.border = '1px solid #E1306C';
+        } else {
+          btn.style.color = 'var(--theme-text-main)';
+          btn.style.border = '1px solid var(--theme-panel-border)';
+        }
         btn.style.fontWeight = 'normal';
       }
     });
@@ -2133,9 +2319,14 @@ Respond ONLY with a single line of comma-separated items with quantities. Do not
   document.getElementById('modal-lang-en').addEventListener('click', () => switchModalLanguage('en'));
   document.getElementById('modal-lang-ta').addEventListener('click', () => switchModalLanguage('ta'));
   document.getElementById('modal-lang-tg').addEventListener('click', () => switchModalLanguage('tg'));
+  document.getElementById('modal-lang-insta')?.addEventListener('click', () => switchModalLanguage('insta'));
 
   function closeVideoPlayer() {
     document.getElementById('video-frame').src = '';
+    const instaBtn = document.getElementById('btn-watch-insta');
+    if (instaBtn) instaBtn.style.display = 'none';
+    const watchBtn = document.getElementById('btn-watch-youtube');
+    if (watchBtn) watchBtn.style.display = 'inline-flex';
     videoDialog.close();
   }
 

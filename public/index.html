@@ -508,10 +508,13 @@
     <!-- TAB: WORKOUT LIBRARY -->
     <section id="tab-workouts" class="tab-content">
       <div class="workout-split-selector">
-        <button class="split-btn active" data-split="beginner">Beginner Plan</button>
-        <button class="split-btn" data-split="intermediate">Intermediate Plan</button>
-        <button class="split-btn" data-split="expert">Expert Plan</button>
-        <button class="split-btn" data-split="custom">Custom Plan</button>
+        <button class="split-btn active" data-split="beginner" data-i18n="btn-split-beginner">Beginner Plan</button>
+        <button class="split-btn" data-split="intermediate" data-i18n="btn-split-intermediate">Intermediate Plan</button>
+        <button class="split-btn" data-split="expert" data-i18n="btn-split-expert">Expert Plan</button>
+        <button class="split-btn" data-split="muscle_split" data-i18n="btn-split-muscle" id="btn-split-muscle" style="border: 1px solid rgba(255, 68, 68, 0.55); background: linear-gradient(135deg, rgba(255, 68, 68, 0.15), rgba(255, 140, 0, 0.08)); font-weight: 700;"><i class="fa-solid fa-fire-flame-curved" style="color: #ff4444; margin-right: 4px;"></i> Pro Intense Split</button>
+        <button class="split-btn" data-split="custom" data-i18n="btn-split-custom">Custom Plan</button>
+        <button class="split-btn" data-split="custom_power" data-i18n="btn-split-custom-power" id="btn-split-custom-power" style="border: 1px solid rgba(0, 229, 255, 0.6); background: linear-gradient(135deg, rgba(0, 229, 255, 0.18), rgba(0, 114, 255, 0.1)); font-weight: 700;"><i class="fa-solid fa-bolt" style="color: #00e5ff; margin-right: 4px;"></i> 10X Strength & Deadlift</button>
+        <button class="split-btn" data-split="shred" data-i18n="btn-split-shred" id="btn-split-shred" style="border: 1px solid rgba(255, 87, 34, 0.45); background: linear-gradient(135deg, rgba(255, 87, 34, 0.12), rgba(255, 152, 0, 0.08)); font-weight: 600;"><i class="fa-solid fa-fire" style="color: #ff5722; margin-right: 4px;"></i> 3-Month 6-Pack & VO2max</button>
       </div>
 
       <div class="workout-plan-container">
@@ -527,7 +530,7 @@
             </p>
             <!-- Week selector for Custom Plan -->
             <div id="workout-week-selector-container" style="display: none; margin-top: 1rem; border-top: 1px solid var(--theme-panel-border); padding-top: 1rem;">
-              <span style="font-size: 0.85rem; color: var(--theme-text-muted); margin-right: 0.75rem; font-weight: 600;">SELECT WEEK:</span>
+              <span style="font-size: 0.85rem; color: var(--theme-text-muted); margin-right: 0.75rem; font-weight: 600;" id="workout-week-selector-label">SELECT WEEK:</span>
               <div class="button-group" style="display: inline-flex;">
                 <button class="btn-toggle active week-btn" data-week="1">Week 1</button>
                 <button class="btn-toggle week-btn" data-week="2">Week 2</button>
@@ -1703,16 +1706,22 @@
     <div class="video-container">
       <iframe id="video-frame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
-    <div class="video-language-toggle" style="display: flex; gap: 0.5rem; margin-top: 0.75rem; justify-content: center; margin-bottom: 0.5rem;">
+    <div class="video-language-toggle" style="display: flex; gap: 0.5rem; margin-top: 0.75rem; justify-content: center; margin-bottom: 0.5rem; flex-wrap: wrap;">
       <button class="btn-secondary" id="modal-lang-en" data-lang="en" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; border-radius: 6px; cursor: pointer; transition: all 0.2s;">English Guide</button>
       <button class="btn-secondary" id="modal-lang-ta" data-lang="ta" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Tamil Guide / தமிழ்</button>
       <button class="btn-secondary" id="modal-lang-tg" data-lang="tg" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Tanglish Guide</button>
+      <button class="btn-secondary" id="modal-lang-insta" data-lang="insta" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; color: #E1306C; border-color: #E1306C;"><i class="fa-brands fa-instagram"></i> Instagram Reel</button>
     </div>
     <p style="color: var(--theme-text-muted); font-size: 0.9rem;" id="video-dialog-instruction"></p>
-    <div class="dialog-actions" style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 1rem;">
-      <a id="btn-watch-youtube" href="#" target="_blank" class="btn-secondary" style="display: inline-flex; align-items: center; gap: 0.4rem; color: #ff3333; border-color: #ff3333; text-decoration: none;">
-        <i class="fa-brands fa-youtube"></i> Watch on YouTube
-      </a>
+    <div class="dialog-actions" style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 1rem; flex-wrap: wrap;">
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <a id="btn-watch-youtube" href="#" target="_blank" class="btn-secondary" style="display: inline-flex; align-items: center; gap: 0.4rem; color: #ff3333; border-color: #ff3333; text-decoration: none;">
+          <i class="fa-brands fa-youtube"></i> Watch on YouTube
+        </a>
+        <a id="btn-watch-insta" href="#" target="_blank" class="btn-secondary" style="display: none; align-items: center; gap: 0.4rem; color: #E1306C; border-color: #E1306C; text-decoration: none;">
+          <i class="fa-brands fa-instagram"></i> View on Instagram
+        </a>
+      </div>
       <button class="btn-secondary" id="btn-close-video">Close Video</button>
     </div>
   </dialog>
@@ -1871,6 +1880,7 @@
             <option value="intermediate">Intermediate</option>
             <option value="expert">Expert</option>
             <option value="custom">Custom (4-Week Plan)</option>
+            <option value="custom_power">10X Strength & Deadlift (New Plan)</option>
           </select>
         </div>
 
@@ -1998,18 +2008,18 @@
   </nav>
 
   <!-- Client Application Scripts -->
-  <script src="/js/data.js?v=20"></script>
-  <script src="/js/translations.js?v=20"></script>
-  <script src="/js/muscleMap.js?v=20"></script>
-  <script src="/js/foodParser.js?v=20"></script>
-  <script src="/js/tracker.js?v=20"></script>
-  <script src="/js/pedometer.js?v=20"></script>
-  <script src="/js/connectedServices.js?v=20"></script>
-  <script src="/js/capacitor-sqlite-bridge.js?v=20"></script>
-  <script src="/js/app.js?v=20"></script>
+  <script src="/js/data.js?v=21"></script>
+  <script src="/js/translations.js?v=21"></script>
+  <script src="/js/muscleMap.js?v=21"></script>
+  <script src="/js/foodParser.js?v=21"></script>
+  <script src="/js/tracker.js?v=21"></script>
+  <script src="/js/pedometer.js?v=21"></script>
+  <script src="/js/connectedServices.js?v=21"></script>
+  <script src="/js/capacitor-sqlite-bridge.js?v=21"></script>
+  <script src="/js/app.js?v=21"></script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js?v=20')
+      navigator.serviceWorker.register('/sw.js?v=21')
         .then(reg => {
           console.log('Service Worker Registered');
           if (reg) reg.update();
