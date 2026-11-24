@@ -11,3 +11,5 @@ database.db
 build/
 ios/
 android/
+.vercel
+.env*

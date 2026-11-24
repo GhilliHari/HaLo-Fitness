@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
+import fs from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { query, run, get, initDatabase, dbPath } from './db.js';
+import { metric } from '@vercel/functions';
+import { query, run, get, ensureDbInitialized, isPostgres, dbPath } from './db.js';
 import { backupDatabaseToGCS, uploadMealPhotoToGCS, syncUserLogsToGCS } from './gcs-manager.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -13,8 +15,26 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(join(__dirname, 'public')));
 
+app.get('/api/health', async (_req, res) => {
+  try {
+    await ensureDbInitialized();
+    await get('SELECT 1 AS ok');
+    res.json({
+      status: 'ok',
+      database: isPostgres() ? 'neon-postgres' : 'sqlite',
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('Health check failed:', err);
+    res.status(500).json({ status: 'error', details: err.message });
+  }
+});
+
 app.get(['/download-apk', '/HaLo-Fitness.apk'], (req, res) => {
   const apkPath = join(__dirname, 'public', 'HaLo-Fitness.apk');
+  if (!fs.existsSync(apkPath)) {
+    return res.status(404).json({ error: 'APK download is not available on this host. Use Add to Home Screen (PWA) on mobile.' });
+  }
   res.download(apkPath, 'HaLo-Fitness.apk');
 });
 
@@ -26,25 +46,32 @@ app.post('/api/log-client-error', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-
-// Ensure DB is initialized before handling requests
-app.use(async (req, res, next) => {
+// Ensure DB schema is initialized before handling DB-backed API routes
+app.use('/api', async (req, res, next) => {
+  if (req.path === '/calorie-recommendation' || req.path === '/log-client-error' || req.path === '/health') {
+    return next();
+  }
   try {
+    await ensureDbInitialized();
     next();
   } catch (err) {
+    console.error('DB init middleware error:', err);
     res.status(500).json({ error: 'Database not initialized', details: err.message });
   }
 });
 
 // Auth Endpoints
 app.post('/api/auth/register', async (req, res) => {
+  const startedAt = performance.now();
   try {
     const { email, password, name } = req.body;
     if (!email || !password || !name) {
+      metric('auth.register', 1, { outcome: 'validation_error' });
       return res.status(400).json({ error: 'Email, password, and name are required' });
     }
     const existing = await get('SELECT id FROM users WHERE email = ?', [email.toLowerCase().trim()]);
     if (existing) {
+      metric('auth.register', 1, { outcome: 'conflict' });
       return res.status(400).json({ error: 'Account with this email already exists' });
     }
     const userRes = await run(
@@ -59,28 +86,41 @@ app.post('/api/auth/register', async (req, res) => {
     `, [userRes.id, name]);
 
     const user = { id: userRes.id, email: email.toLowerCase().trim(), name };
+    metric('auth.register', 1, { outcome: 'success' });
     res.json({ message: 'Registration successful', user });
   } catch (err) {
+    console.error('Register error:', err);
+    metric('auth.register', 1, { outcome: 'error' });
     res.status(500).json({ error: 'Registration failed', details: err.message });
+  } finally {
+    metric('auth.duration_ms', performance.now() - startedAt, { operation: 'register' });
   }
 });
 
 app.post('/api/auth/login', async (req, res) => {
+  const startedAt = performance.now();
   try {
     const { email, password } = req.body;
     if (!email || !password) {
+      metric('auth.login', 1, { outcome: 'validation_error' });
       return res.status(400).json({ error: 'Email and password are required' });
     }
     const user = await get('SELECT id, email, password, name FROM users WHERE email = ?', [email.toLowerCase().trim()]);
     if (!user || user.password !== password) {
+      metric('auth.login', 1, { outcome: 'unauthorized' });
       return res.status(401).json({ error: 'Invalid email or password' });
     }
+    metric('auth.login', 1, { outcome: 'success' });
     res.json({
       message: 'Login successful',
       user: { id: user.id, email: user.email, name: user.name }
     });
   } catch (err) {
+    console.error('Login error:', err);
+    metric('auth.login', 1, { outcome: 'error' });
     res.status(500).json({ error: 'Login failed', details: err.message });
+  } finally {
+    metric('auth.duration_ms', performance.now() - startedAt, { operation: 'login' });
   }
 });
 
@@ -435,9 +475,38 @@ app.post('/api/tracker/log', async (req, res) => {
       finalDistKm
     ]);
 
+    metric('tracker.log_saved', 1, { outcome: 'success' });
     res.json({ message: 'Log entry saved successfully', date, steps: finalSteps, calories_burned_steps: finalCalBurnedSteps, distance_km: finalDistKm });
   } catch (err) {
+    console.error('Save tracker log error:', err);
+    metric('tracker.log_saved', 1, { outcome: 'error' });
     res.status(500).json({ error: 'Failed to save log entry', details: err.message });
+  }
+});
+
+// Pedometer step sync endpoint (used by public/js/pedometer.js)
+app.post('/api/logs', async (req, res) => {
+  try {
+    const { date, steps, calories_burned_steps, distance_km } = req.body;
+    if (!date) {
+      return res.status(400).json({ error: 'Date is required (YYYY-MM-DD)' });
+    }
+    const maxFn = isPostgres() ? 'GREATEST' : 'MAX';
+    await run(`
+      INSERT INTO logs (date, steps, calories_burned_steps, distance_km)
+      VALUES (?, ?, ?, ?)
+      ON CONFLICT(date) DO UPDATE SET
+        steps = ${maxFn}(COALESCE(excluded.steps, 0), logs.steps),
+        calories_burned_steps = ${maxFn}(COALESCE(excluded.calories_burned_steps, 0), logs.calories_burned_steps),
+        distance_km = ${maxFn}(COALESCE(excluded.distance_km, 0.0), logs.distance_km)
+    `, [date, parseInt(steps) || 0, parseInt(calories_burned_steps) || 0, parseFloat(distance_km) || 0.0]);
+
+    metric('tracker.log_saved', 1, { outcome: 'success', source: 'pedometer' });
+    res.json({ status: 'success', date });
+  } catch (err) {
+    console.error('Pedometer log sync error:', err);
+    metric('tracker.log_saved', 1, { outcome: 'error', source: 'pedometer' });
+    res.status(500).json({ error: 'Failed to sync pedometer log', details: err.message });
   }
 });
 
@@ -495,13 +564,14 @@ app.post('/api/services/apple-health/sync', async (req, res) => {
     const finalDistance = distance_km !== undefined ? parseFloat(distance_km) : (existing ? existing.distance_km : 0.0);
     const finalCalBurned = active_energy !== undefined ? parseInt(active_energy) : (existing ? existing.calories_burned_steps : 0);
 
+    const maxFn = isPostgres() ? 'GREATEST' : 'MAX';
     await run(`
       INSERT INTO logs (date, steps, calories_burned_steps, distance_km)
       VALUES (?, ?, ?, ?)
       ON CONFLICT(date) DO UPDATE SET
-        steps = MAX(COALESCE(excluded.steps, 0), logs.steps),
-        calories_burned_steps = MAX(COALESCE(excluded.calories_burned_steps, 0), logs.calories_burned_steps),
-        distance_km = MAX(COALESCE(excluded.distance_km, 0.0), logs.distance_km)
+        steps = ${maxFn}(COALESCE(excluded.steps, 0), logs.steps),
+        calories_burned_steps = ${maxFn}(COALESCE(excluded.calories_burned_steps, 0), logs.calories_burned_steps),
+        distance_km = ${maxFn}(COALESCE(excluded.distance_km, 0.0), logs.distance_km)
     `, [syncDate, finalSteps, finalCalBurned, finalDistance]);
 
     await run(`
@@ -510,6 +580,7 @@ app.post('/api/services/apple-health/sync', async (req, res) => {
       WHERE service_name = 'apple_health'
     `, [now]);
 
+    metric('wearables.sync', 1, { provider: 'apple_health', outcome: 'success' });
     res.json({
       status: 'success',
       message: 'Apple Health & Apple Watch synchronized successfully',
@@ -521,6 +592,8 @@ app.post('/api/services/apple-health/sync', async (req, res) => {
       synced_at: now
     });
   } catch (err) {
+    console.error('Apple Health sync failed:', err);
+    metric('wearables.sync', 1, { provider: 'apple_health', outcome: 'error' });
     res.status(500).json({ error: 'Apple Health sync failed', details: err.message });
   }
 });
@@ -566,16 +639,21 @@ app.post('/api/services/strava/connect', async (req, res) => {
     `, [access_token || 'strava_access_token_demo', JSON.stringify(athleteData), now]);
 
     // Insert sample recent Strava activities if none exist
-    const actCount = await get("SELECT COUNT(*) as count FROM external_activities WHERE source = 'strava'");
-    if (actCount.count === 0) {
-      const today = new Date().toISOString().split('T')[0];
+    const actCountRow = await get("SELECT COUNT(*) as count FROM external_activities WHERE source = 'strava'");
+    if (Number(actCountRow?.count || 0) === 0) {
+      const isoDaysAgo = (d) => {
+        const dt = new Date();
+        dt.setDate(dt.getDate() - d);
+        return dt.toISOString().split('T')[0];
+      };
       await run(`
         INSERT INTO external_activities (source, external_id, activity_name, activity_type, start_date, distance_meters, moving_time_seconds, elapsed_time_seconds, calories, average_speed, max_speed, elevation_gain)
         VALUES 
         ('strava', 'strava_act_1', 'Morning Power Run ⚡️', 'Run', ?, 5240.0, 1680, 1720, 385.0, 3.12, 4.45, 42.0),
-        ('strava', 'strava_act_2', 'Sunset Tempo Ride 🚴', 'Ride', date('now', '-2 days'), 18500.0, 2700, 2900, 520.0, 6.85, 9.20, 115.0),
-        ('strava', 'strava_act_3', 'Weekend Nature Trail Walk 🌲', 'Walk', date('now', '-4 days'), 6400.0, 3600, 3800, 290.0, 1.77, 2.30, 68.0)
-      `, [today]);
+        ('strava', 'strava_act_2', 'Sunset Tempo Ride 🚴', 'Ride', ?, 18500.0, 2700, 2900, 520.0, 6.85, 9.20, 115.0),
+        ('strava', 'strava_act_3', 'Weekend Nature Trail Walk 🌲', 'Walk', ?, 6400.0, 3600, 3800, 290.0, 1.77, 2.30, 68.0)
+        ON CONFLICT (external_id) DO NOTHING
+      `, [isoDaysAgo(0), isoDaysAgo(2), isoDaysAgo(4)]);
     }
 
     res.json({
@@ -615,10 +693,11 @@ app.post('/api/services/strava/sync', async (req, res) => {
     });
 
     if (activities.length > 0) {
+      const maxFn = isPostgres() ? 'GREATEST' : 'MAX';
       await run(`
         UPDATE logs 
         SET workout_completed = 1,
-            workout_duration_mins = MAX(workout_duration_mins, ?),
+            workout_duration_mins = ${maxFn}(workout_duration_mins, ?),
             workout_style = CASE WHEN workout_style = '' THEN 'Strava Outdoor Cardio' ELSE workout_style || ' + Strava' END
         WHERE date = ?
       `, [workoutDurationMins, today]);
@@ -626,6 +705,7 @@ app.post('/api/services/strava/sync', async (req, res) => {
 
     await run("UPDATE connected_services SET last_synced_at = ? WHERE service_name = 'strava'", [new Date().toISOString()]);
 
+    metric('wearables.sync', 1, { provider: 'strava', outcome: 'success' });
     res.json({
       status: 'success',
       message: `Synced ${activities.length} Strava activities to today's log`,
@@ -634,6 +714,8 @@ app.post('/api/services/strava/sync', async (req, res) => {
       workout_mins: workoutDurationMins
     });
   } catch (err) {
+    console.error('Strava sync failed:', err);
+    metric('wearables.sync', 1, { provider: 'strava', outcome: 'error' });
     res.status(500).json({ error: 'Failed to sync Strava activities', details: err.message });
   }
 });
@@ -683,10 +765,11 @@ app.post('/api/gcs/sync-logs', async (req, res) => {
 });
 
 export { app as expressApp };
+export default app;
 
 const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 
-if (isMain) {
+if (isMain && !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`==================================================`);
     console.log(` HaLo Portal Running at http://localhost:${PORT}`);

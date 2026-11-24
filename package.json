@@ -14,14 +14,13 @@
     "build:bridge": "esbuild src/sqlite-bridge.js --bundle --minify --sourcemap --target=es2020 --outfile=public/js/capacitor-sqlite-bridge.js"
   },
   "dependencies": {
-    "@capacitor-community/sqlite": "^8.1.0",
-    "@capacitor/android": "^8.4.1",
-    "@capacitor/cli": "^8.4.1",
-    "@capacitor/core": "^8.4.1",
-    "@capacitor/ios": "^8.4.1",
     "@google-cloud/storage": "^7.21.0",
+    "@neondatabase/serverless": "^1.0.2",
+    "@vercel/functions": "^3.10.0",
     "cors": "^2.8.5",
-    "express": "^4.21.2",
+    "express": "^4.21.2"
+  },
+  "optionalDependencies": {
     "sqlite3": "^5.1.7"
   },
   "build": {
@@ -32,7 +31,12 @@
   },
   "type": "module",
   "devDependencies": {
+    "@capacitor-community/sqlite": "^8.1.0",
+    "@capacitor/android": "^8.4.1",
     "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/ios": "^8.4.1",
     "electron": "^43.1.0",
     "electron-builder": "^26.15.3",
     "esbuild": "^0.28.1"
